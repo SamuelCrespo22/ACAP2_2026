@@ -167,9 +167,7 @@ cython_debug/
 
 # Data and Models
 data/
-models/
 *.pt
-*.pth
 *.h5
 *.hdf5
 augmented_data/
