@@ -1,90 +1,130 @@
-# Dataloader
 import os
+from PIL import Image
 import pandas as pd
 import torch
-from torch.utils.data import Dataset, DataLoader
-from torchvision import transforms
-from PIL import Image
+import torch.utils.data as data
+import torchvision.transforms as transforms
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
-import joblib
 
-
-class ButterflyDataset(Dataset):
-    """
-    Class to load images of butterflies.
-    """
-    def __init__(self, dataframe, img_dir, transform=None):
-        """
-        dataframe: Pandas DataFrame with filename and label.
-        img_dir: Path to the folder where images are stored ('data/train/').
-        transform: torchvision transformations to apply to the image.
-        """
-        self.dataframe = dataframe
+class ButterflyDataset(data.Dataset):
+    def __init__(self, df, img_dir, transform=None):
+        self.img_labels = df.reset_index(drop=True)
         self.img_dir = img_dir
         self.transform = transform
 
+        self.classes = sorted(self.img_labels['label'].unique())
+        self.class_to_idx = {cls_name: idx for idx, cls_name in enumerate(self.classes)}
+
     def __len__(self):
-        return len(self.dataframe)
+        return len(self.img_labels)
 
     def __getitem__(self, idx):
-        """
-        Given an index, load the corresponding image and label, apply transformations, and return them as tensors.
-        """
-        img_name = os.path.join(self.img_dir, self.dataframe.iloc[idx, 0])
-        image = Image.open(img_name).convert("RGB")
-        label = self.dataframe.iloc[idx, 1]
+        img_name = self.img_labels.iloc[idx]['filename']
+        img_path = os.path.join(self.img_dir, img_name)
+
+        image = Image.open(img_path).convert("RGB")
+
+        label_name = self.img_labels.iloc[idx]['label']
+        label_idx = self.class_to_idx[label_name]
+        label = torch.tensor(label_idx, dtype=torch.long)
 
         if self.transform:
             image = self.transform(image)
-            
-        return image, torch.tensor(label, dtype=torch.long)
 
-def get_dataloaders(csv_path, img_dir, batch_size=32, img_size=224, test_size=0.2):
+        return image, label
+
+
+def get_dataloaders(
+    csv_path,
+    img_dir,
+    batch_size=32,
+    img_size=64,
+    val_size=0.2,
+    test_size=0.0,
+    model_type="classifier",
+    num_workers=2
+):
     """
-    Read CSV, convert text labels to numbers, split into train and validation, and return ready-to-use DataLoaders.
+    Loads and prepares dataloaders for training, validation, and optionally testing.
+    
+    Args:
+        csv_path (str): Path to the CSV file.
+        img_dir (str): Path to the images directory.
+        batch_size (int): Number of images per batch.
+        img_size (int): Size to resize the images to.
+        val_size (float): Proportion of data for validation.
+        test_size (float): Proportion of data for an internal test set.
+        model_type (str): "classifier" for standard preprocessing (no data augmentation).
+                          "generative" for preprocessing with data augmentation.
+        num_workers (int): Number of CPU subprocesses to use for data loading.
+                          
+    Returns:
+        train_loader, val_loader, test_loader, classes
     """
+    assert val_size + test_size < 1.0, "val_size and test_size combined must be less than 1.0 (need data for training)."
+
     df = pd.read_csv(csv_path)
+    
+    pin_memory = torch.cuda.is_available()
 
-    col_filename = df.columns[0]
-    col_label = df.columns[1]
-    
-    # Convert labels to numbers from 0 to 74 (75 classes).
-    label_encoder = LabelEncoder()
-    df['label_encoded'] = label_encoder.fit_transform(df[col_label])
-    
-    df_clean = df[[col_filename, 'label_encoded']]
-    
-    # TT 80/20 with stratification.
-    train_df, val_df = train_test_split(df_clean, test_size=test_size, stratify=df_clean['label_encoded'], random_state=42)
-    
-    train_df = train_df.reset_index(drop=True)
-    val_df = val_df.reset_index(drop=True)
+    base_transforms = [transforms.Resize((img_size, img_size))]
 
-    # Data Augmentation and Normalization
-    train_transforms = transforms.Compose([
-        transforms.Resize((img_size, img_size)),
-        transforms.RandomHorizontalFlip(),
-        transforms.RandomVerticalFlip(),
-        transforms.RandomRotation(20),
-        transforms.ColorJitter(brightness=0.3, contrast=0.3, saturation=0.2),
-        transforms.ToTensor(),             # [C, H, W] with values from 0 to 1.
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-    ])
-    
-    val_transforms = transforms.Compose([
-        transforms.Resize((img_size, img_size)),
+    if model_type == "generative":
+        train_transforms = transforms.Compose(base_transforms + [
+            transforms.RandomHorizontalFlip(p=0.5),
+            transforms.RandomRotation(degrees=10),
+            transforms.ToTensor(),
+        ])
+    else:
+        # The classifier cannot use data augmentation
+        train_transforms = transforms.Compose(base_transforms + [
+            transforms.ToTensor(),
+        ])
+
+    # Validation/Test exclusively use standard preprocessing
+    eval_transforms = transforms.Compose(base_transforms + [
         transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
-    train_dataset = ButterflyDataset(train_df, img_dir, transform=train_transforms)
-    val_dataset = ButterflyDataset(val_df, img_dir, transform=val_transforms)
+    train_loader, val_loader, test_loader = None, None, None
 
-    num_workers = 2
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, persistent_workers=num_workers > 0)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers, persistent_workers=num_workers > 0)
+    # First split: Separate Test set (if requested)
+    if test_size > 0:
+        train_val_df, test_df = train_test_split(
+            df, test_size=test_size, random_state=42, stratify=df['label']
+        )
+        test_dataset = ButterflyDataset(df=test_df, img_dir=img_dir, transform=eval_transforms)
+        test_loader = data.DataLoader(
+            test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers, pin_memory=pin_memory
+        )
+    else:
+        train_val_df = df
 
-    joblib.dump(label_encoder, 'label_encoder.pkl')
+    # Second split: Separate Validation set (if requested)
+    if val_size > 0:
+        # Adjust validation proportion relative to the remaining training+validation data
+        relative_val_size = val_size / (1.0 - test_size)
+        
+        train_df, val_df = train_test_split(
+            train_val_df, test_size=relative_val_size, random_state=42, stratify=train_val_df['label']
+        )
+        
+        val_dataset = ButterflyDataset(df=val_df, img_dir=img_dir, transform=eval_transforms)
+        val_loader = data.DataLoader(
+            val_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers, pin_memory=pin_memory
+        )
+    else:
+        train_df = train_val_df
 
-    return train_loader, val_loader, label_encoder.classes_
+    # Final Training Dataset
+    train_dataset = ButterflyDataset(df=train_df, img_dir=img_dir, transform=train_transforms)
+    
+    # drop_last=True is very useful for generative models so incomplete batches don't break layers
+    train_loader = data.DataLoader(
+        train_dataset, batch_size=batch_size, shuffle=True, drop_last=True, num_workers=num_workers, pin_memory=pin_memory
+    )
+    
+    # Get class names from dataset
+    classes = train_dataset.classes
+
+    return train_loader, val_loader, test_loader, classes

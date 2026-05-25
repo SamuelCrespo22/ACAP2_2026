@@ -7,51 +7,10 @@ from dataset import get_dataloaders
 from utils import (
     plot_training_curves,
     evaluate_model,
-    save_metrics_txt,
     append_metrics_to_csv,
     save_confusion_matrix,
 )
-
-
-class BaselineCNN(nn.Module):
-    def __init__(self, num_classes):
-        super().__init__()
-
-        def conv_block(in_channels, out_channels):
-            return nn.Sequential(
-                nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
-                nn.BatchNorm2d(out_channels),
-                nn.ReLU(inplace=True),
-                nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
-                nn.BatchNorm2d(out_channels),
-                nn.ReLU(inplace=True),
-                nn.MaxPool2d(2, 2)
-            )
-
-        self.features = nn.Sequential(
-            conv_block(3, 64),
-            conv_block(64, 128),
-            conv_block(128, 256),
-            nn.AdaptiveAvgPool2d((1, 1))
-        )
-
-        self.classifier = nn.Sequential(
-            *[
-                layer
-                for size in [256, 512, 1024]
-                for layer in (
-                    nn.Linear(size, size * 2),
-                    nn.ReLU(inplace=True),
-                    nn.Dropout(p=0.5)
-                )
-            ],
-            nn.Linear(2048, num_classes)
-        )
-
-    def forward(self, x):
-        x = self.features(x)
-        x = torch.flatten(x, 1)
-        return self.classifier(x)
+from models.base_cnn import BaselineCNN
 
 
 def train_one_epoch(model, train_loader, criterion, optimizer, device):
@@ -111,8 +70,8 @@ def main():
     img_dir = "data/train"
 
     batch_size = 32
-    img_size = 224
-    epochs = 50 #no notebook está com 20
+    img_size = 64
+    epochs = 50
     learning_rate = 0.001
 
     os.makedirs("results", exist_ok=True)
@@ -120,12 +79,13 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
-    train_loader, val_loader, classes = get_dataloaders(
+    train_loader, val_loader, test_loader, classes = get_dataloaders(
         csv_path=csv_path,
         img_dir=img_dir,
         batch_size=batch_size,
         img_size=img_size,
-        test_size=0.2
+        val_size=0.2,
+        test_size=0.0   # Set to >0 if you want an internal test split for final evaluation
     )
 
     num_classes = len(classes)

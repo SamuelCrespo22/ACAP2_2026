@@ -1,10 +1,13 @@
 import os
 import csv
-from datetime import datetime
 
 import numpy as np
 import torch
 import matplotlib.pyplot as plt
+import scipy.linalg
+import torch.nn.functional as F
+from torchvision.models import inception_v3, Inception_V3_Weights
+from skimage.metrics import structural_similarity
 
 from sklearn.metrics import (
     accuracy_score,
@@ -29,6 +32,7 @@ def plot_training_curves(train_losses, val_losses, train_accs, val_accs, save_pa
     plt.xlabel("Epoch")
     plt.ylabel("Loss")
     plt.title("Loss Over Epochs")
+    plt.grid(True, linestyle="--", alpha=0.6)
     plt.legend()
 
     plt.subplot(1, 2, 2)
@@ -37,6 +41,7 @@ def plot_training_curves(train_losses, val_losses, train_accs, val_accs, save_pa
     plt.xlabel("Epoch")
     plt.ylabel("Accuracy")
     plt.title("Accuracy Over Epochs")
+    plt.grid(True, linestyle="--", alpha=0.6)
     plt.legend()
 
     plt.tight_layout()
@@ -48,7 +53,7 @@ def plot_training_curves(train_losses, val_losses, train_accs, val_accs, save_pa
 
 def top_k_accuracy(y_true, y_prob, k=5):
     top_k_preds = np.argsort(y_prob, axis=1)[:, -k:]
-    correct = sum(y_true[i] in top_k_preds[i] for i in range(len(y_true)))
+    correct = np.any(top_k_preds == y_true[:, np.newaxis], axis=1).sum()
     return correct / len(y_true)
 
 
@@ -68,13 +73,13 @@ def evaluate_model(model, dataloader, device, class_names):
             probs = torch.softmax(outputs, dim=1)
             preds = torch.argmax(probs, dim=1)
 
-            y_true.extend(labels.cpu().numpy())
-            y_pred.extend(preds.cpu().numpy())
-            y_prob.extend(probs.cpu().numpy())
+            y_true.append(labels.cpu().numpy())
+            y_pred.append(preds.cpu().numpy())
+            y_prob.append(probs.cpu().numpy())
 
-    y_true = np.array(y_true)
-    y_pred = np.array(y_pred)
-    y_prob = np.array(y_prob)
+    y_true = np.concatenate(y_true, axis=0)
+    y_pred = np.concatenate(y_pred, axis=0)
+    y_prob = np.concatenate(y_prob, axis=0)
 
     metrics = {
         "accuracy": accuracy_score(y_true, y_pred),
@@ -95,7 +100,6 @@ def evaluate_model(model, dataloader, device, class_names):
     )
 
     return metrics, report, y_true, y_pred
-
 
 
 def append_metrics_to_csv(metrics, epochs, best_val_acc, save_path):
@@ -149,3 +153,111 @@ def save_confusion_matrix(y_true, y_pred, class_names, save_path):
     plt.close()
 
     print(f"Saved confusion matrix to {save_path}")
+
+
+class GenerativeEvaluator:
+    def __init__(self, device="cpu"):
+        self.device = device
+        # Carrega o InceptionV3 para as métricas FID e IS
+        self.inception = inception_v3(weights=Inception_V3_Weights.DEFAULT, transform_input=False).to(device)
+        self.inception.eval()
+
+    def _get_features_and_probs(self, images, batch_size=32):
+        self.inception.eval()
+        features_list = []
+        probs_list = []
+        
+        # O InceptionV3 espera imagens normalizadas com as estatísticas do ImageNet
+        mean = torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1).to(self.device)
+        std = torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1).to(self.device)
+        
+        with torch.no_grad():
+            for i in range(0, len(images), batch_size):
+                batch = images[i:i+batch_size].to(self.device)
+                
+                # Redimensionar para 299x299 como exigido pelo InceptionV3
+                batch = F.interpolate(batch, size=(299, 299), mode='bilinear', align_corners=False)
+                batch = (batch - mean) / std
+                
+                # Guardar a camada fc original
+                fc_backup = self.inception.fc
+                
+                # 1. Extrair Features (remoção temporária da camada de classificação)
+                self.inception.fc = torch.nn.Identity()
+                features = self.inception(batch)
+                
+                # 2. Restaurar a camada fc e obter Probabilidades
+                self.inception.fc = fc_backup
+                logits = self.inception.fc(features)
+                probs = F.softmax(logits, dim=1)
+                
+                features_list.append(features.cpu().numpy())
+                probs_list.append(probs.cpu().numpy())
+                
+        return np.concatenate(features_list, axis=0), np.concatenate(probs_list, axis=0)
+
+    def calculate_frechet_distance(self, mu1, sigma1, mu2, sigma2, eps=1e-6):
+        diff = mu1 - mu2
+        covmean, _ = scipy.linalg.sqrtm(sigma1.dot(sigma2), disp=False)
+        
+        if not np.isfinite(covmean).all():
+            offset = np.eye(sigma1.shape[0]) * eps
+            covmean = scipy.linalg.sqrtm((sigma1 + offset).dot(sigma2 + offset))
+            
+        if np.iscomplexobj(covmean):
+            covmean = covmean.real
+            
+        return diff.dot(diff) + np.trace(sigma1 + sigma2 - 2 * covmean)
+
+    def compute_fid(self, real_images, fake_images, batch_size=32):
+        """
+        Calcula o Frechet Inception Distance (FID).
+        Espera dois tensores PyTorch [N, C, H, W] no intervalo [0, 1].
+        """
+        real_features, _ = self._get_features_and_probs(real_images, batch_size)
+        fake_features, _ = self._get_features_and_probs(fake_images, batch_size)
+        
+        mu1, sigma1 = np.mean(real_features, axis=0), np.cov(real_features, rowvar=False)
+        mu2, sigma2 = np.mean(fake_features, axis=0), np.cov(fake_features, rowvar=False)
+        
+        return self.calculate_frechet_distance(mu1, sigma1, mu2, sigma2)
+
+    def compute_is(self, fake_images, splits=10, batch_size=32):
+        """
+        Calcula o Inception Score (IS).
+        Espera um tensor PyTorch [N, C, H, W] no intervalo [0, 1].
+        """
+        _, probs = self._get_features_and_probs(fake_images, batch_size)
+        
+        scores = []
+        n_samples = probs.shape[0]
+        split_size = max(1, n_samples // splits)
+        
+        for i in range(splits):
+            part = probs[i * split_size : (i + 1) * split_size, :]
+            if len(part) == 0:
+                continue
+            kl = part * (np.log(part + 1e-10) - np.log(np.mean(part, axis=0, keepdims=True) + 1e-10))
+            kl = np.mean(np.sum(kl, axis=1))
+            scores.append(np.exp(kl))
+            
+        return np.mean(scores), np.std(scores)
+
+    def compute_ssim(self, recon_x, x, is_tanh=False):
+        """
+        Calcula o Structural Similarity Index Measure (SSIM) em lotes (média).
+        Espera tensores PyTorch [N, C, H, W].
+        """
+        if is_tanh:
+            recon_x = (recon_x + 1) / 2
+            x = (x + 1) / 2
+            
+        recon_x_np = recon_x.detach().cpu().numpy().transpose(0, 2, 3, 1)
+        x_np = x.detach().cpu().numpy().transpose(0, 2, 3, 1)
+        
+        total_ssim = 0.0
+        for i in range(x.size(0)):
+            val = structural_similarity(x_np[i], recon_x_np[i], data_range=1.0, channel_axis=-1)
+            total_ssim += val
+            
+        return total_ssim / x.size(0)
