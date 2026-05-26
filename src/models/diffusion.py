@@ -98,14 +98,25 @@ class SelfAttention(nn.Module):
 # U-Net 64x64 with Self-Attention in Bottleneck
 # ======================================================
 class UNet64(nn.Module):
-    def __init__(self, time_dim=128):
+    def __init__(self, time_dim=128, num_classes=None):
         super().__init__()
+        self.conditional = num_classes is not None
 
         self.time_mlp = nn.Sequential(
             SinusoidalTimeEmbedding(time_dim),
             nn.Linear(time_dim, time_dim),
             nn.ReLU()
         )
+
+        if self.conditional:
+            self.class_emb = nn.Embedding(num_classes, time_dim)
+            self.class_mlp = nn.Sequential(
+                nn.Linear(time_dim, time_dim),
+                nn.ReLU()
+            )
+        else:
+            self.class_emb = None
+            self.class_mlp = None
 
         # -------- Encoder --------
         self.enc1 = ConvBlock(3, 64, time_dim)
@@ -135,8 +146,13 @@ class UNet64(nn.Module):
 
         self.out = nn.Conv2d(64, 3, 1)
 
-    def forward(self, x, t):
+    def forward(self, x, t, labels=None):
         t_emb = self.time_mlp(t)
+        if self.conditional:
+            if labels is None:
+                raise ValueError("Conditional UNet64 requires labels")
+            c_emb = self.class_mlp(self.class_emb(labels))
+            t_emb = t_emb + c_emb
 
         # -------- Encoder --------
         x1 = self.enc1(x, t_emb)              #  64x64,  64
@@ -192,20 +208,20 @@ class DDPM:
         a_bar = self.alpha_bar[t][:, None, None, None]
         return torch.sqrt(a_bar) * x0 + torch.sqrt(1 - a_bar) * noise, noise
 
-    def loss(self, x0):
+    def loss(self, x0, labels=None):
         B = x0.size(0)
         t = torch.randint(0, self.T, (B,), device=self.device)
         x_noisy, noise = self.forward_diffusion(x0, t)
-        noise_pred = self.model(x_noisy, t)
+        noise_pred = self.model(x_noisy, t, labels)
         return F.mse_loss(noise_pred, noise)
 
     @torch.no_grad()
-    def sample(self, n):
+    def sample(self, n, labels=None):
         x = torch.randn(n, 3, 64, 64, device=self.device)
 
         for t in reversed(range(self.T)):
             t_batch = torch.full((n,), t, device=self.device, dtype=torch.long)
-            eps = self.model(x, t_batch)
+            eps = self.model(x, t_batch, labels)
 
             alpha = self.alphas[t]
             alpha_bar = self.alpha_bar[t]

@@ -1,1 +1,0 @@
-# Generate and Save images.

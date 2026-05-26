@@ -102,14 +102,15 @@ def evaluate_model(model, dataloader, device, class_names):
     return metrics, report, y_true, y_pred
 
 
-def append_metrics_to_csv(metrics, epochs, best_val_acc, save_path):
+def append_metrics_to_csv(metrics, epochs, split, best_val_acc=None, save_path="results/metrics_history.csv"):
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
     file_exists = os.path.isfile(save_path)
 
     row = {
+        "split": split,
         "epochs": epochs,
-        "best_val_acc": best_val_acc,
+        "best_val_acc": best_val_acc if best_val_acc is not None else "",
         "accuracy": metrics["accuracy"],
         "macro_precision": metrics["macro_precision"],
         "macro_recall": metrics["macro_recall"],
