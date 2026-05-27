@@ -102,13 +102,19 @@ def evaluate_model(model, dataloader, device, class_names):
     return metrics, report, y_true, y_pred
 
 
-def append_metrics_to_csv(metrics, epochs, split, best_val_acc=None, save_path="results/metrics_history.csv"):
+def append_metrics_to_csv(
+    metrics,
+    epochs,
+    experiment_name,
+    best_val_acc=None,
+    save_path="results/all_experiments.csv"
+):
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
     file_exists = os.path.isfile(save_path)
 
     row = {
-        "split": split,
+        "experiment_name": experiment_name,
         "epochs": epochs,
         "best_val_acc": best_val_acc if best_val_acc is not None else "",
         "accuracy": metrics["accuracy"],
@@ -130,6 +136,47 @@ def append_metrics_to_csv(metrics, epochs, split, best_val_acc=None, save_path="
         writer.writerow(row)
 
     print(f"Appended metrics to {save_path}")
+
+    
+def append_generative_metrics_to_csv(
+    experiment_name,
+    epochs,
+    save_path="results/generative_experiments.csv",
+    fid="",
+    inception_score="",
+    ssim="",
+    train_loss="",
+    val_loss="",
+    loss_g="",
+    loss_d="",
+    loss_c="",
+):
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+
+    file_exists = os.path.isfile(save_path)
+
+    row = {
+        "experiment_name": experiment_name,
+        "epochs": epochs,
+        "fid": fid,
+        "inception_score": inception_score,
+        "ssim": ssim,
+        "train_loss": train_loss,
+        "val_loss": val_loss,
+        "loss_g": loss_g,
+        "loss_d": loss_d,
+        "loss_c": loss_c,
+    }
+
+    with open(save_path, "a", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=row.keys())
+
+        if not file_exists:
+            writer.writeheader()
+
+        writer.writerow(row)
+
+    print(f"Appended generative metrics to {save_path}")
 
 
 def save_confusion_matrix(y_true, y_pred, class_names, save_path):

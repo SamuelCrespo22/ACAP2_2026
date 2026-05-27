@@ -6,3 +6,4 @@ scikit-learn
 matplotlib
 tqdm
 jupyter
+scikit-image
