@@ -1,157 +1,180 @@
+import argparse
 import os
-import csv
+
 import torch
 import torch.optim as optim
+
 from dataset import get_dataloaders
-from wgan_gp import Generator, Critic, weights_init # Ajusta os imports se necessário
-from utils import GenerativeEvaluator
+from models.diffusion import UNet64, DDPM
+from utils import GenerativeEvaluator, append_generative_metrics_to_csv
 
-def compute_gradient_penalty(critic, real_samples, fake_samples, labels, device):
-    alpha = torch.rand((real_samples.size(0), 1, 1, 1), device=device)
-    interpolates = (alpha * real_samples + ((1 - alpha) * fake_samples)).requires_grad_(True)
 
-    d_interpolates = critic(interpolates, labels)
-    fake = torch.ones_like(d_interpolates, device=device)
+def parse_args():
+    parser = argparse.ArgumentParser(description="Train Conditional Diffusion Model")
 
-    gradients = torch.autograd.grad(
-        outputs=d_interpolates,
-        inputs=interpolates,
-        grad_outputs=fake,
-        create_graph=True,
-        retain_graph=True,
-        only_inputs=True,
-    )[0]
+    parser.add_argument("--epochs", type=int, default=50)
+    parser.add_argument("--batch_size", type=int, default=32)
+    parser.add_argument("--learning_rate", type=float, default=1e-4)
+    parser.add_argument("--eval_every", type=int, default=1)
 
-    gradients = gradients.view(gradients.size(0), -1)
-    gradient_penalty = ((gradients.norm(2, dim=1) - 1) ** 2).mean()
-    return gradient_penalty
+    parser.add_argument("--T", type=int, default=1000)
+    parser.add_argument("--schedule", choices=["linear", "cosine"], default="linear")
 
-def train_wgangp():
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"A treinar WGAN-GP no dispositivo: {device}")
+    parser.add_argument("--save_dir", default="results_gen/diffusion")
+    parser.add_argument("--experiment_name", default="Diffusion linear")
 
-    # Configurações
-    batch_size = 32
-    epochs = 200
-    lr = 1e-4
-    z_dim = 100
-    n_critic = 5
-    lambda_gp = 10
-    eval_every = 5
+    return parser.parse_args()
+
+
+def train_diffusion():
+    args = parse_args()
+
+    os.makedirs(args.save_dir, exist_ok=True)
     os.makedirs("results_gen", exist_ok=True)
-    csv_path = "results_gen/wgangp_metrics.csv"
 
-    with open(csv_path, mode='w', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow(['Epoch', 'Loss_C', 'Loss_G', 'FID', 'IS_mean'])
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    print(f"Using device: {device}")
+    print(f"Experiment: {args.experiment_name}")
 
     train_loader, val_loader, _, _ = get_dataloaders(
         csv_path="data/train.csv",
         img_dir="data/train",
-        batch_size=batch_size,
+        batch_size=args.batch_size,
         img_size=64,
-        val_size=0.2,
+        val_size=0.15,
+        test_size=0.15,
         augment=False,
         normalize=False,
+        num_workers=0,
     )
 
     num_classes = len(train_loader.dataset.classes)
+    print(f"Number of classes: {num_classes}")
 
-    netG = Generator(inputDim=z_dim, num_classes=num_classes).to(device)
-    netC = Critic(num_classes=num_classes).to(device)
-    netG.apply(weights_init)
-    netC.apply(weights_init)
+    model = UNet64(
+        time_dim=128,
+        num_classes=num_classes
+    ).to(device)
 
-    optimizerG = optim.Adam(netG.parameters(), lr=lr, betas=(0.0, 0.9))
-    optimizerC = optim.Adam(netC.parameters(), lr=lr, betas=(0.0, 0.9))
+    ddpm = DDPM(
+        model=model,
+        T=args.T,
+        device=device,
+        schedule=args.schedule
+    )
+
+    optimizer = optim.Adam(
+        ddpm.model.parameters(),
+        lr=args.learning_rate
+    )
+
     evaluator = GenerativeEvaluator(device=device)
 
-    best_fid = float('inf')
+    best_fid = float("inf")
+    best_is = ""
+    best_train_loss = ""
 
-    for epoch in range(1, epochs + 1):
-        running_lossC, running_lossG = 0.0, 0.0
-        batches_G = 0
-        
-        for i, (real_imgs, labels) in enumerate(train_loader):
-            real_imgs = real_imgs.to(device)
+    epochs_no_improve = 0
+
+    for epoch in range(1, args.epochs + 1):
+        ddpm.model.train()
+        running_train_loss = 0.0
+
+        for images, labels in train_loader:
+            images = images.to(device)
             labels = labels.to(device)
-            real_imgs_scaled = real_imgs * 2.0 - 1.0
-            cur_batch_size = real_imgs.size(0)
 
-            # --- Treinar Critic ---
-            for _ in range(n_critic):
-                optimizerC.zero_grad()
-                z = torch.randn(cur_batch_size, z_dim, 1, 1, device=device)
-                fake_imgs = netG(z, labels)
+            images = images * 2.0 - 1.0
 
-                critic_real = netC(real_imgs_scaled, labels).view(-1)
-                critic_fake = netC(fake_imgs.detach(), labels).view(-1)
+            optimizer.zero_grad()
 
-                gp = compute_gradient_penalty(netC, real_imgs_scaled, fake_imgs.detach(), labels, device)
-                loss_C = critic_fake.mean() - critic_real.mean() + lambda_gp * gp
+            loss = ddpm.loss(images, labels)
 
-                loss_C.backward()
-                optimizerC.step()
-                running_lossC += loss_C.item()
+            loss.backward()
+            optimizer.step()
 
-            # --- Treinar Gerador ---
-            optimizerG.zero_grad()
-            z = torch.randn(cur_batch_size, z_dim, 1, 1, device=device)
-            fake_imgs = netG(z, labels)
+            running_train_loss += loss.item()
 
-            critic_fake = netC(fake_imgs, labels).view(-1)
-            loss_G = -critic_fake.mean()
+        avg_train_loss = running_train_loss / len(train_loader)
 
-            loss_G.backward()
-            optimizerG.step()
-            running_lossG += loss_G.item()
-            batches_G += 1
+        if epoch % args.eval_every == 0 or epoch == args.epochs:
+            ddpm.model.eval()
 
-        avg_lossC = running_lossC / (len(train_loader) * n_critic)
-        avg_lossG = running_lossG / batches_G
+            real_imgs_list = []
+            fake_imgs_list = []
 
-        fid_val, is_mean = None, None
-
-        # --- Avaliação Generativa ---
-        if epoch % eval_every == 0 or epoch == epochs:
-            print("A calcular métricas generativas (FID e IS)...")
-            netG.eval()
-            real_imgs_list, fake_imgs_list = [], []
-            
             with torch.no_grad():
+                total_samples = 0
+
                 for val_imgs, val_labels in val_loader:
-                    if len(real_imgs_list) * batch_size >= 500:
+                    if total_samples >= 128:
                         break
-                    real_imgs_list.append(val_imgs)
-                    
-                    z = torch.randn(val_imgs.size(0), z_dim, 1, 1, device=device)
-                    val_labels = val_labels.to(device)
-                    fakes = netG(z, val_labels)
-                    
+
+                    n_samples = min(val_imgs.size(0), 128 - total_samples)
+
+                    real_imgs = val_imgs[:n_samples]
+                    real_imgs_list.append(real_imgs)
+
+                    labels = val_labels[:n_samples].to(device)
+
+                    fakes = ddpm.sample(
+                        n=n_samples,
+                        labels=labels
+                    )
+
                     fakes = (fakes + 1.0) / 2.0
                     fakes = torch.clamp(fakes, 0.0, 1.0)
+
                     fake_imgs_list.append(fakes.cpu())
-                    
+
+                    total_samples += n_samples
+
             real_tensor = torch.cat(real_imgs_list, dim=0)
             fake_tensor = torch.cat(fake_imgs_list, dim=0)
-            
+
             fid_val = evaluator.compute_fid(real_tensor, fake_tensor)
             is_mean, _ = evaluator.compute_is(fake_tensor)
-            
-            print(f"Epoch [{epoch}/{epochs}] Loss C: {avg_lossC:.4f} | Loss G: {avg_lossG:.4f} | FID: {fid_val:.2f} | IS: {is_mean:.2f}")
+
+            print(
+                f"Epoch [{epoch}/{args.epochs}] "
+                f"Train Loss: {avg_train_loss:.4f} | "
+                f"FID: {fid_val:.4f} | "
+                f"IS: {is_mean:.4f}"
+            )
 
             if fid_val < best_fid:
                 best_fid = fid_val
-                torch.save(netG.state_dict(), "results_gen/best_wgangp_g.pth")
-                torch.save(netC.state_dict(), "results_gen/best_wgangp_c.pth")
-                print(" -> Melhor WGAN-GP guardada (Novo melhor FID)!")
-            netG.train()
-        else:
-            print(f"Epoch [{epoch}/{epochs}] Loss C: {avg_lossC:.4f} | Loss G: {avg_lossG:.4f}")
+                best_is = is_mean
+                best_train_loss = avg_train_loss
+                epochs_no_improve = 0
 
-        with open(csv_path, mode='a', newline='') as f:
-            writer = csv.writer(f)
-            writer.writerow([epoch, avg_lossC, avg_lossG, fid_val if fid_val else '', is_mean if is_mean else ''])
+                torch.save(
+                    ddpm.model.state_dict(),
+                    os.path.join(args.save_dir, "best_diffusion.pth")
+                )
+
+                print(" -> New best model saved.")
+
+            else:
+                epochs_no_improve += 1
+                print(f" -> No improvement for {epochs_no_improve} eval(s).")
+
+        else:
+            print(
+                f"Epoch [{epoch}/{args.epochs}] "
+                f"Train Loss: {avg_train_loss:.4f}"
+            )
+
+    append_generative_metrics_to_csv(
+        experiment_name=args.experiment_name,
+        epochs=args.epochs,
+        fid=best_fid,
+        inception_score=best_is,
+        train_loss=best_train_loss,
+        save_path="results_gen/generative_experiments.csv",
+    )
+
 
 if __name__ == "__main__":
-    train_wgangp()
+    train_diffusion()
