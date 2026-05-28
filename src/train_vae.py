@@ -3,6 +3,7 @@ import os
 import torch
 import torch.optim as optim
 
+from torchvision.utils import save_image
 from dataset import get_dataloaders
 from models.vae import ConvVAE, vae_loss
 from utils import GenerativeEvaluator, append_generative_metrics_to_csv
@@ -14,7 +15,7 @@ def parse_args():
     parser.add_argument("--epochs", type=int, default=50)
     parser.add_argument("--batch_size", type=int, default=32)
     parser.add_argument("--learning_rate", type=float, default=1e-3)
-    parser.add_argument("--eval_every", type=int, default=1)
+    parser.add_argument("--eval_every", type=int, default=5) 
     parser.add_argument("--save_dir", default="results_gen/vae")
     parser.add_argument("--experiment_name", default="VAE latent 128")
     return parser.parse_args()
@@ -38,7 +39,7 @@ def train_vae():
         img_size=64,
         val_size=0.15,
         test_size=0.15,
-        augment=False,
+        augment=True, 
         normalize=False,
         num_workers=0,
     )
@@ -60,6 +61,7 @@ def train_vae():
     best_val_loss = ""
 
     epochs_no_improve = 0
+    patience = 3 
 
     for epoch in range(1, args.epochs + 1):
         model.train()
@@ -96,9 +98,8 @@ def train_vae():
 
                 running_val_loss += loss.item()
 
-                if len(real_imgs_list) * args.batch_size < 500:
-                    real_imgs_list.append(images.cpu())
-                    recon_imgs_list.append(recon_images.cpu())
+                real_imgs_list.append(images.cpu())
+                recon_imgs_list.append(recon_images.cpu())
 
         avg_val_loss = running_val_loss / len(val_loader)
 
@@ -127,6 +128,9 @@ def train_vae():
                 is_tanh=False
             )
 
+            grid_path = os.path.join(args.save_dir, f"grid_epoch_{epoch}.png")
+            save_image(generated_imgs[:32], grid_path, nrow=8)
+            
             fid_val = evaluator.compute_fid(real_tensor, generated_imgs)
             is_mean, _ = evaluator.compute_is(generated_imgs)
 
@@ -156,6 +160,10 @@ def train_vae():
             else:
                 epochs_no_improve += 1
                 print(f" -> No improvement for {epochs_no_improve} eval(s).")
+                
+                if epochs_no_improve >= patience:
+                    print(f"Early stopping triggered! Model stopped improving for {patience * args.eval_every} epochs.")
+                    break
 
         else:
             print(

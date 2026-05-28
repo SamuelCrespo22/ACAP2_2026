@@ -1,0 +1,78 @@
+C:\Users\Cláudio\Desktop\Universidade\4ºAno\2ºSemestre\ACA\ACAP2_2026\venv\lib\site-packages\torch\autograd\graph.py:869: UserWarning: Attempting to run cuBLAS, but there was no current CUDA context! Attempting to set the primary context... (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\pytorch\aten\src\ATen\cuda\CublasHandlePool.cpp:335.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+Using device: cuda
+Experiment: WGAN-GP n_critic 3
+Epoch [1/300] Loss C: -36.3736 | Loss G: 28.3688
+Epoch [2/300] Loss C: -70.9340 | Loss G: 121.1241
+Epoch [3/300] Loss C: -45.5273 | Loss G: 114.8377
+Epoch [4/300] Loss C: -45.6161 | Loss G: 91.7635
+Epoch [5/300] Loss C: -44.3046 | Loss G: 63.7511 | FID: 366.4587 | IS: 2.0347
+ -> New best model saved.
+Epoch [6/300] Loss C: -39.9420 | Loss G: 57.5493
+Epoch [7/300] Loss C: -36.4335 | Loss G: 49.7282
+Epoch [8/300] Loss C: -28.7757 | Loss G: 22.4711
+Epoch [9/300] Loss C: -25.8314 | Loss G: 23.8631
+Epoch [10/300] Loss C: -20.4496 | Loss G: 43.8699 | FID: 281.7165 | IS: 2.0989
+ -> New best model saved.
+Epoch [11/300] Loss C: -17.4803 | Loss G: 25.0800
+Epoch [12/300] Loss C: -15.4332 | Loss G: 5.4593
+Epoch [13/300] Loss C: -13.5186 | Loss G: -3.2244
+Epoch [14/300] Loss C: -11.1459 | Loss G: -10.2793
+Epoch [15/300] Loss C: -9.8807 | Loss G: -37.1205 | FID: 294.1835 | IS: 1.4969
+ -> No improvement for 1 eval(s).
+Epoch [16/300] Loss C: -9.1526 | Loss G: -72.6688
+Epoch [17/300] Loss C: -8.7428 | Loss G: -97.0600
+Epoch [18/300] Loss C: -8.5720 | Loss G: -100.4651
+Epoch [19/300] Loss C: -8.1533 | Loss G: -92.8728
+Epoch [20/300] Loss C: -7.9985 | Loss G: -71.0164 | FID: 266.4461 | IS: 1.5592
+ -> New best model saved.
+Epoch [21/300] Loss C: -7.6745 | Loss G: -51.0608
+Epoch [22/300] Loss C: -7.4254 | Loss G: -43.8201
+Epoch [23/300] Loss C: -7.2764 | Loss G: -42.9229
+Epoch [24/300] Loss C: -6.9801 | Loss G: -40.4674
+Epoch [25/300] Loss C: -6.7680 | Loss G: -40.0345 | FID: 256.9774 | IS: 1.6857
+ -> New best model saved.
+Epoch [26/300] Loss C: -6.8110 | Loss G: -38.2763
+Epoch [27/300] Loss C: -6.7135 | Loss G: -35.3117
+Epoch [28/300] Loss C: -6.6353 | Loss G: -35.7070
+Epoch [29/300] Loss C: -6.3074 | Loss G: -34.1058
+Epoch [30/300] Loss C: -6.1684 | Loss G: -40.6771 | FID: 260.0233 | IS: 1.6129
+ -> No improvement for 1 eval(s).
+Epoch [31/300] Loss C: -6.2088 | Loss G: -45.9861
+Epoch [32/300] Loss C: -5.8816 | Loss G: -44.2776
+Epoch [33/300] Loss C: -5.7331 | Loss G: -50.6309
+Epoch [34/300] Loss C: -5.7171 | Loss G: -49.8259
+Epoch [35/300] Loss C: -5.6875 | Loss G: -49.7456 | FID: 258.8934 | IS: 1.7330
+ -> No improvement for 2 eval(s).
+Epoch [36/300] Loss C: -5.6156 | Loss G: -47.0146
+Epoch [37/300] Loss C: -5.8523 | Loss G: -52.5844
+Epoch [38/300] Loss C: -6.1483 | Loss G: -46.5222
+Epoch [39/300] Loss C: -6.1179 | Loss G: -43.6012
+Epoch [40/300] Loss C: -6.3543 | Loss G: -43.3374 | FID: 256.9597 | IS: 1.7923
+ -> New best model saved.
+Epoch [41/300] Loss C: -6.4848 | Loss G: -33.6306
+Epoch [42/300] Loss C: -6.6077 | Loss G: -34.6093
+Epoch [43/300] Loss C: -6.9649 | Loss G: -29.4761
+Epoch [44/300] Loss C: -7.2485 | Loss G: -28.8445
+Epoch [45/300] Loss C: -7.3768 | Loss G: -31.8353 | FID: 259.2628 | IS: 1.6931
+ -> No improvement for 1 eval(s).
+Epoch [46/300] Loss C: -7.6124 | Loss G: -24.6452
+Epoch [47/300] Loss C: -7.6136 | Loss G: -17.6661
+Epoch [48/300] Loss C: -7.8851 | Loss G: -19.4131
+Epoch [49/300] Loss C: -8.1937 | Loss G: -25.8293
+Epoch [50/300] Loss C: -8.4744 | Loss G: -25.2582 | FID: 263.9910 | IS: 1.6052
+ -> No improvement for 2 eval(s).
+Epoch [51/300] Loss C: -8.3823 | Loss G: -30.0952
+Epoch [52/300] Loss C: -8.6629 | Loss G: -17.8079
+Epoch [53/300] Loss C: -8.8702 | Loss G: -10.9860
+Epoch [54/300] Loss C: -8.7250 | Loss G: -23.9402
+Epoch [55/300] Loss C: -8.5050 | Loss G: -26.3097 | FID: 263.0481 | IS: 1.5734
+ -> No improvement for 3 eval(s).
+Epoch [56/300] Loss C: -8.5029 | Loss G: -38.9277
+Epoch [57/300] Loss C: -8.4034 | Loss G: -47.1281
+Epoch [58/300] Loss C: -8.2610 | Loss G: -23.8587
+Epoch [59/300] Loss C: -8.1501 | Loss G: -20.7049
+Epoch [60/300] Loss C: -8.0055 | Loss G: -20.0960 | FID: 264.8643 | IS: 1.6115
+ -> No improvement for 4 eval(s).
+Early stopping triggered! Model stopped improving for 20 epochs.
+Appended generative metrics to results_gen/generative_experiments.csv

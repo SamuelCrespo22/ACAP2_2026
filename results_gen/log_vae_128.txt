@@ -1,0 +1,28 @@
+Using device: cuda
+Experiment: VAE latent 128
+Epoch [1/300] Train Loss: 0.6756 | Val Loss: 0.6573
+Epoch [2/300] Train Loss: 0.6440 | Val Loss: 0.6398
+Epoch [3/300] Train Loss: 0.6310 | Val Loss: 0.6364
+Epoch [4/300] Train Loss: 0.6242 | Val Loss: 0.6307
+Epoch [5/300] Train Loss: 0.6123 | Val Loss: 0.6118 | FID: 274.3293 | IS: 1.8422 | SSIM: 0.2074
+ -> New best model saved.
+Epoch [6/300] Train Loss: 0.5977 | Val Loss: 0.6048
+Epoch [7/300] Train Loss: 0.5897 | Val Loss: 0.6008
+Epoch [8/300] Train Loss: 0.5842 | Val Loss: 0.5982
+Epoch [9/300] Train Loss: 0.5815 | Val Loss: 0.5952
+Epoch [10/300] Train Loss: 0.5783 | Val Loss: 0.5927 | FID: 290.0028 | IS: 1.5724 | SSIM: 0.2690
+ -> No improvement for 1 eval(s).
+Epoch [11/300] Train Loss: 0.5760 | Val Loss: 0.5907
+Epoch [12/300] Train Loss: 0.5738 | Val Loss: 0.5891
+Epoch [13/300] Train Loss: 0.5715 | Val Loss: 0.5879
+Epoch [14/300] Train Loss: 0.5706 | Val Loss: 0.5864
+Epoch [15/300] Train Loss: 0.5687 | Val Loss: 0.5859 | FID: 334.2397 | IS: 1.4900 | SSIM: 0.3007
+ -> No improvement for 2 eval(s).
+Epoch [16/300] Train Loss: 0.5675 | Val Loss: 0.5844
+Epoch [17/300] Train Loss: 0.5668 | Val Loss: 0.5830
+Epoch [18/300] Train Loss: 0.5657 | Val Loss: 0.5827
+Epoch [19/300] Train Loss: 0.5647 | Val Loss: 0.5820
+Epoch [20/300] Train Loss: 0.5635 | Val Loss: 0.5812 | FID: 347.5809 | IS: 1.5587 | SSIM: 0.3254
+ -> No improvement for 3 eval(s).
+Early stopping triggered! Model stopped improving for 15 epochs.
+Appended generative metrics to results_gen/generative_experiments.csv

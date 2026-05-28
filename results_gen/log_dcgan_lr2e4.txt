@@ -1,0 +1,40 @@
+Using device: cuda
+Experiment: DCGAN lr 2e-4
+Epoch [1/300] Loss D: 0.4756 | Loss G: 3.6751
+Epoch [2/300] Loss D: 0.5463 | Loss G: 6.7043
+Epoch [3/300] Loss D: 0.4923 | Loss G: 5.6660
+Epoch [4/300] Loss D: 0.5449 | Loss G: 5.1091
+Epoch [5/300] Loss D: 0.5730 | Loss G: 5.1583 | FID: 362.4529 | IS: 1.6752
+ -> New best model saved.
+Epoch [6/300] Loss D: 0.6125 | Loss G: 4.1271
+Epoch [7/300] Loss D: 0.7204 | Loss G: 4.0710
+Epoch [8/300] Loss D: 0.6300 | Loss G: 3.4199
+Epoch [9/300] Loss D: 0.5405 | Loss G: 4.2165
+Epoch [10/300] Loss D: 0.6464 | Loss G: 3.8392 | FID: 284.5166 | IS: 1.6471
+ -> New best model saved.
+Epoch [11/300] Loss D: 0.7479 | Loss G: 3.5850
+Epoch [12/300] Loss D: 0.7034 | Loss G: 3.9826
+Epoch [13/300] Loss D: 0.7570 | Loss G: 3.9605
+Epoch [14/300] Loss D: 0.6697 | Loss G: 4.5303
+Epoch [15/300] Loss D: 0.4745 | Loss G: 3.8530 | FID: 337.8372 | IS: 1.7248
+ -> No improvement for 1 eval(s).
+Epoch [16/300] Loss D: 0.3999 | Loss G: 4.4185
+Epoch [17/300] Loss D: 0.4017 | Loss G: 4.8759
+Epoch [18/300] Loss D: 0.5210 | Loss G: 4.1743
+Epoch [19/300] Loss D: 0.8115 | Loss G: 3.6894
+Epoch [20/300] Loss D: 0.7470 | Loss G: 3.4059 | FID: 316.7564 | IS: 1.4566
+ -> No improvement for 2 eval(s).
+Epoch [21/300] Loss D: 0.8607 | Loss G: 3.3306
+Epoch [22/300] Loss D: 0.7279 | Loss G: 3.2613
+Epoch [23/300] Loss D: 0.6800 | Loss G: 3.2989
+Epoch [24/300] Loss D: 0.7226 | Loss G: 3.3114
+Epoch [25/300] Loss D: 0.7323 | Loss G: 3.1791 | FID: 307.4030 | IS: 1.6271
+ -> No improvement for 3 eval(s).
+Epoch [26/300] Loss D: 0.6070 | Loss G: 3.0248
+Epoch [27/300] Loss D: 0.6436 | Loss G: 3.1243
+Epoch [28/300] Loss D: 0.7705 | Loss G: 3.1881
+Epoch [29/300] Loss D: 0.6583 | Loss G: 2.9058
+Epoch [30/300] Loss D: 0.7256 | Loss G: 2.6985 | FID: 295.7472 | IS: 1.5011
+ -> No improvement for 4 eval(s).
+Early stopping triggered! Model stopped improving for 20 epochs.
+Appended generative metrics to results_gen/generative_experiments.csv

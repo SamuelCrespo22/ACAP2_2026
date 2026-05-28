@@ -4,6 +4,7 @@ import os
 import torch
 import torch.optim as optim
 
+from torchvision.utils import save_image
 from dataset import get_dataloaders
 from models.wgan_gp import Generator, Critic, weights_init
 from utils import GenerativeEvaluator, append_generative_metrics_to_csv
@@ -49,7 +50,7 @@ def parse_args():
     parser.add_argument("--z_dim", type=int, default=100)
     parser.add_argument("--n_critic", type=int, default=5)
     parser.add_argument("--lambda_gp", type=float, default=10)
-    parser.add_argument("--eval_every", type=int, default=1)
+    parser.add_argument("--eval_every", type=int, default=5)
 
     parser.add_argument("--save_dir", default="results_gen/wgangp")
     parser.add_argument("--experiment_name", default="WGAN-GP n_critic 5")
@@ -75,7 +76,7 @@ def train_wgangp():
         img_size=64,
         val_size=0.15,
         test_size=0.15,
-        augment=False,
+        augment=True,
         normalize=False,
         num_workers=0,
     )
@@ -114,6 +115,7 @@ def train_wgangp():
     best_loss_c = ""
 
     epochs_no_improve = 0
+    patience = 4
 
     for epoch in range(1, args.epochs + 1):
         netG.train()
@@ -199,9 +201,6 @@ def train_wgangp():
 
             with torch.no_grad():
                 for val_imgs, val_labels in val_loader:
-                    if len(real_imgs_list) * args.batch_size >= 500:
-                        break
-
                     real_imgs_list.append(val_imgs)
 
                     val_labels = val_labels.to(device)
@@ -222,6 +221,9 @@ def train_wgangp():
 
             real_tensor = torch.cat(real_imgs_list, dim=0)
             fake_tensor = torch.cat(fake_imgs_list, dim=0)
+
+            grid_path = os.path.join(args.save_dir, f"grid_epoch_{epoch}.png")
+            save_image(fake_tensor[:32], grid_path, nrow=8)
 
             fid_val = evaluator.compute_fid(real_tensor, fake_tensor)
             is_mean, _ = evaluator.compute_is(fake_tensor)
@@ -257,6 +259,10 @@ def train_wgangp():
             else:
                 epochs_no_improve += 1
                 print(f" -> No improvement for {epochs_no_improve} eval(s).")
+                
+                if epochs_no_improve >= patience:
+                    print(f"Early stopping triggered! Model stopped improving for {patience * args.eval_every} epochs.")
+                    break
 
         else:
             print(

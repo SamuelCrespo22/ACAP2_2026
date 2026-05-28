@@ -4,6 +4,7 @@ import os
 import torch
 import torch.optim as optim
 
+from torchvision.utils import save_image
 from dataset import get_dataloaders
 from models.diffusion import UNet64, DDPM
 from utils import GenerativeEvaluator, append_generative_metrics_to_csv
@@ -15,7 +16,7 @@ def parse_args():
     parser.add_argument("--epochs", type=int, default=50)
     parser.add_argument("--batch_size", type=int, default=32)
     parser.add_argument("--learning_rate", type=float, default=1e-4)
-    parser.add_argument("--eval_every", type=int, default=1)
+    parser.add_argument("--eval_every", type=int, default=5)
 
     parser.add_argument("--T", type=int, default=1000)
     parser.add_argument("--schedule", choices=["linear", "cosine"], default="linear")
@@ -44,7 +45,7 @@ def train_diffusion():
         img_size=64,
         val_size=0.15,
         test_size=0.15,
-        augment=False,
+        augment=True, 
         normalize=False,
         num_workers=0,
     )
@@ -76,6 +77,7 @@ def train_diffusion():
     best_train_loss = ""
 
     epochs_no_improve = 0
+    patience = 4
 
     for epoch in range(1, args.epochs + 1):
         ddpm.model.train()
@@ -105,21 +107,15 @@ def train_diffusion():
             fake_imgs_list = []
 
             with torch.no_grad():
-                total_samples = 0
-
+                print(f"A iniciar amostragem (inferência) de avaliação. Isto pode demorar alguns minutos...")
+                
                 for val_imgs, val_labels in val_loader:
-                    if total_samples >= 128:
-                        break
+                    real_imgs_list.append(val_imgs)
 
-                    n_samples = min(val_imgs.size(0), 128 - total_samples)
-
-                    real_imgs = val_imgs[:n_samples]
-                    real_imgs_list.append(real_imgs)
-
-                    labels = val_labels[:n_samples].to(device)
+                    labels = val_labels.to(device)
 
                     fakes = ddpm.sample(
-                        n=n_samples,
+                        n=val_imgs.size(0),
                         labels=labels
                     )
 
@@ -128,10 +124,11 @@ def train_diffusion():
 
                     fake_imgs_list.append(fakes.cpu())
 
-                    total_samples += n_samples
-
             real_tensor = torch.cat(real_imgs_list, dim=0)
             fake_tensor = torch.cat(fake_imgs_list, dim=0)
+
+            grid_path = os.path.join(args.save_dir, f"grid_epoch_{epoch}.png")
+            save_image(fake_tensor[:32], grid_path, nrow=8)
 
             fid_val = evaluator.compute_fid(real_tensor, fake_tensor)
             is_mean, _ = evaluator.compute_is(fake_tensor)
@@ -159,6 +156,10 @@ def train_diffusion():
             else:
                 epochs_no_improve += 1
                 print(f" -> No improvement for {epochs_no_improve} eval(s).")
+                
+                if epochs_no_improve >= patience:
+                    print(f"Early stopping triggered! Model stopped improving for {patience * args.eval_every} epochs.")
+                    break
 
         else:
             print(
