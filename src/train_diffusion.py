@@ -14,9 +14,9 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Train Conditional Diffusion Model")
 
     parser.add_argument("--epochs", type=int, default=50)
-    parser.add_argument("--batch_size", type=int, default=32)
+    parser.add_argument("--batch_size", type=int, default=64)
     parser.add_argument("--learning_rate", type=float, default=1e-4)
-    parser.add_argument("--eval_every", type=int, default=5)
+    parser.add_argument("--eval_every", type=int, default=10)
 
     parser.add_argument("--T", type=int, default=1000)
     parser.add_argument("--schedule", choices=["linear", "cosine"], default="linear")
@@ -157,7 +157,7 @@ def train_diffusion():
                 epochs_no_improve += 1
                 print(f" -> No improvement for {epochs_no_improve} eval(s).")
                 
-                if epochs_no_improve >= patience:
+                if epochs_no_improve >= patience and epoch > 100:
                     print(f"Early stopping triggered! Model stopped improving for {patience * args.eval_every} epochs.")
                     break
 

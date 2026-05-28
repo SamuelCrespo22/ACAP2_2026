@@ -13,12 +13,12 @@ from utils import GenerativeEvaluator, append_generative_metrics_to_csv
 def parse_args():
     parser = argparse.ArgumentParser(description="Train Conditional DCGAN")
     parser.add_argument("--epochs", type=int, default=50)
-    parser.add_argument("--batch_size", type=int, default=32)
+    parser.add_argument("--batch_size", type=int, default=64)
     parser.add_argument("--lr_g", type=float, default=2e-4)
     parser.add_argument("--lr_d", type=float, default=2e-4)
     parser.add_argument("--beta1", type=float, default=0.5)
     parser.add_argument("--z_dim", type=int, default=100)
-    parser.add_argument("--eval_every", type=int, default=5) 
+    parser.add_argument("--eval_every", type=int, default=2) 
     parser.add_argument("--save_dir", default="results_gen/dcgan")
     parser.add_argument("--experiment_name", default="DCGAN lr 2e-4")
     return parser.parse_args()
@@ -83,7 +83,7 @@ def train_dcgan():
     best_loss_d = ""
 
     epochs_no_improve = 0
-    patience = 4
+    patience = 20
 
     real_label = 1.0
     fake_label = 0.0
@@ -225,7 +225,7 @@ def train_dcgan():
                 epochs_no_improve += 1
                 print(f" -> No improvement for {epochs_no_improve} eval(s).")
                 
-                if epochs_no_improve >= patience:
+                if epochs_no_improve >= patience and epoch > 100:
                     print(f"Early stopping triggered! Model stopped improving for {patience * args.eval_every} epochs.")
                     break
 

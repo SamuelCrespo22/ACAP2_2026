@@ -45,12 +45,12 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Train Conditional WGAN-GP")
 
     parser.add_argument("--epochs", type=int, default=50)
-    parser.add_argument("--batch_size", type=int, default=32)
+    parser.add_argument("--batch_size", type=int, default=64)
     parser.add_argument("--lr", type=float, default=1e-4)
     parser.add_argument("--z_dim", type=int, default=100)
     parser.add_argument("--n_critic", type=int, default=5)
     parser.add_argument("--lambda_gp", type=float, default=10)
-    parser.add_argument("--eval_every", type=int, default=5)
+    parser.add_argument("--eval_every", type=int, default=2)
 
     parser.add_argument("--save_dir", default="results_gen/wgangp")
     parser.add_argument("--experiment_name", default="WGAN-GP n_critic 5")
@@ -115,7 +115,7 @@ def train_wgangp():
     best_loss_c = ""
 
     epochs_no_improve = 0
-    patience = 4
+    patience = 20
 
     for epoch in range(1, args.epochs + 1):
         netG.train()
@@ -260,7 +260,7 @@ def train_wgangp():
                 epochs_no_improve += 1
                 print(f" -> No improvement for {epochs_no_improve} eval(s).")
                 
-                if epochs_no_improve >= patience:
+                if epochs_no_improve >= patience and epoch > 100:
                     print(f"Early stopping triggered! Model stopped improving for {patience * args.eval_every} epochs.")
                     break
 
