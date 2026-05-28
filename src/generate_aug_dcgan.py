@@ -4,32 +4,39 @@ import torch
 import pandas as pd
 from torchvision.utils import save_image
 from dataset import get_dataloaders
-from dcgan import Generator 
+from models.dcgan import Generator 
 
 def generate_augmented_dcgan():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-    target_per_class = 150
+    target_per_class = 120
     z_dim = 100
     output_dir = "data/train_aug_dcgan"
     output_csv = "data/train_aug_dcgan.csv"
     os.makedirs(output_dir, exist_ok=True)
 
     train_loader, _, _, classes = get_dataloaders(
-        csv_path="data/train.csv", img_dir="data/train", val_size=0.2, augment=False, normalize=False
+        csv_path="data/train.csv",
+        img_dir="data/train",
+        val_size=0.15,
+        test_size=0.15,
+        augment=False,
+        normalize=False
     )
     train_df = train_loader.dataset.img_labels
     
-    print("A copiar imagens originais...")
+    print("Copying original images...")
     for _, row in train_df.iterrows():
         shutil.copy2(os.path.join("data/train", row['filename']), os.path.join(output_dir, row['filename']))
 
+    # Load Model
     netG = Generator(inputDim=z_dim, num_classes=len(classes)).to(device)
     netG.load_state_dict(torch.load("results_gen/best_dcgan_g.pth", map_location=device))
     netG.eval()
 
     new_rows = []
     
+    # Generate Images
     with torch.no_grad():
         for class_idx, class_name in enumerate(classes):
             current_count = len(train_df[train_df['label'] == class_name])
@@ -37,15 +44,15 @@ def generate_augmented_dcgan():
             
             if to_generate <= 0: continue
                 
-            print(f"DCGAN a gerar {to_generate} imagens para: {class_name}...")
+            print(f"DCGAN generating {to_generate} images to: {class_name}...")
             
-            # GANs esperam ruído com a dimensão (N, z_dim, 1, 1)
+            # GANs expect noise with dimension (N, z_dim, 1, 1)
             z = torch.randn(to_generate, z_dim, 1, 1, device=device)
             labels = torch.full((to_generate,), class_idx, dtype=torch.long, device=device)
             
             samples = netG(z, labels)
             
-            # --- O SEGREDO AQUI: Reverter Tanh [-1, 1] para [0, 1] ---
+            # Revert from Tanh [-1, 1] to [0, 1]
             samples = (samples + 1.0) / 2.0 
             samples = torch.clamp(samples, 0.0, 1.0) 
             
@@ -55,7 +62,7 @@ def generate_augmented_dcgan():
                 new_rows.append({"filename": img_name, "label": class_name})
 
     pd.concat([train_df, pd.DataFrame(new_rows)], ignore_index=True).to_csv(output_csv, index=False)
-    print(f"Dataset DCGAN concluído: {output_csv}")
+    print(f"DCGAN Dataset concluded: {output_csv}")
 
 if __name__ == "__main__":
     generate_augmented_dcgan()
