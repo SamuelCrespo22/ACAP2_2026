@@ -9,7 +9,7 @@ from models.dcgan import Generator
 def generate_augmented_dcgan():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-    target_per_class = 120
+    generate_per_class = 50
     z_dim = 100
     output_dir = "data/train_aug_dcgan"
     output_csv = "data/train_aug_dcgan.csv"
@@ -39,23 +39,19 @@ def generate_augmented_dcgan():
     # Generate Images
     with torch.no_grad():
         for class_idx, class_name in enumerate(classes):
-            current_count = len(train_df[train_df['label'] == class_name])
-            to_generate = target_per_class - current_count
-            
-            if to_generate <= 0: continue
-                
-            print(f"DCGAN generating {to_generate} images to: {class_name}...")
-            
+            to_generate = generate_per_class
+            print(f"DCGAN generating {to_generate} images for class: {class_name}...")
+
             # GANs expect noise with dimension (N, z_dim, 1, 1)
             z = torch.randn(to_generate, z_dim, 1, 1, device=device)
             labels = torch.full((to_generate,), class_idx, dtype=torch.long, device=device)
-            
+
             samples = netG(z, labels)
-            
+
             # Revert from Tanh [-1, 1] to [0, 1]
             samples = (samples + 1.0) / 2.0 
             samples = torch.clamp(samples, 0.0, 1.0) 
-            
+
             for i in range(to_generate):
                 img_name = f"gen_dcgan_{class_idx}_{i}.jpg"
                 save_image(samples[i], os.path.join(output_dir, img_name))

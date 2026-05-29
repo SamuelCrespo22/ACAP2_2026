@@ -86,7 +86,7 @@ def get_dataloaders(
     if augment:
         train_transforms += [
             transforms.RandomHorizontalFlip(p=0.5),
-            transforms.RandomRotation(degrees=10),
+            transforms.RandomRotation(degrees=10, expand=False, fill=None, padding_mode='reflect'),
         ]
     train_transforms += [transforms.ToTensor()]
     if normalize:
