@@ -107,7 +107,7 @@ def train_diffusion():
             fake_imgs_list = []
 
             with torch.no_grad():
-                print(f"A iniciar amostragem (inferência) de avaliação. Isto pode demorar alguns minutos...")
+                print(f"Starting evaluation sampling (inference). This may take a few minutes...")
                 
                 for val_imgs, val_labels in val_loader:
                     real_imgs_list.append(val_imgs)

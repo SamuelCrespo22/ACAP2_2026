@@ -206,7 +206,7 @@ def save_confusion_matrix(y_true, y_pred, class_names, save_path):
 class GenerativeEvaluator:
     def __init__(self, device="cpu"):
         self.device = device
-        # Carrega o InceptionV3 para as métricas FID e IS
+        # Loads InceptionV3 for FID and IS metrics
         self.inception = inception_v3(weights=Inception_V3_Weights.DEFAULT, transform_input=False).to(device)
         self.inception.eval()
 
@@ -215,7 +215,7 @@ class GenerativeEvaluator:
         features_list = []
         probs_list = []
         
-        # O InceptionV3 espera imagens normalizadas com as estatísticas do ImageNet
+        # Normalized with ImageNet statistics - PyTorch official documentation
         mean = torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1).to(self.device)
         std = torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1).to(self.device)
         
@@ -223,18 +223,18 @@ class GenerativeEvaluator:
             for i in range(0, len(images), batch_size):
                 batch = images[i:i+batch_size].to(self.device)
                 
-                # Redimensionar para 299x299 como exigido pelo InceptionV3
+                # Resize to 299x299 (required by InceptionV3)
                 batch = F.interpolate(batch, size=(299, 299), mode='bilinear', align_corners=False)
                 batch = (batch - mean) / std
                 
-                # Guardar a camada fc original
+                # Save the original fc layer
                 fc_backup = self.inception.fc
                 
-                # 1. Extrair Features (remoção temporária da camada de classificação)
+                # Extract Features (temporary removal of the classification layer)
                 self.inception.fc = torch.nn.Identity()
                 features = self.inception(batch)
                 
-                # 2. Restaurar a camada fc e obter Probabilidades
+                # Restore the fc layer and get Probabilities
                 self.inception.fc = fc_backup
                 logits = self.inception.fc(features)
                 probs = F.softmax(logits, dim=1)
@@ -259,8 +259,8 @@ class GenerativeEvaluator:
 
     def compute_fid(self, real_images, fake_images, batch_size=32):
         """
-        Calcula o Frechet Inception Distance (FID).
-        Espera dois tensores PyTorch [N, C, H, W] no intervalo [0, 1].
+        Calculates the Frechet Inception Distance (FID).
+        Expects two PyTorch tensors [N, C, H, W] in the [0, 1] range.
         """
         real_features, _ = self._get_features_and_probs(real_images, batch_size)
         fake_features, _ = self._get_features_and_probs(fake_images, batch_size)
@@ -272,8 +272,8 @@ class GenerativeEvaluator:
 
     def compute_is(self, fake_images, splits=10, batch_size=32):
         """
-        Calcula o Inception Score (IS).
-        Espera um tensor PyTorch [N, C, H, W] no intervalo [0, 1].
+        Calculates the Inception Score (IS).
+        Expects a PyTorch tensor [N, C, H, W] in the [0, 1] range.
         """
         _, probs = self._get_features_and_probs(fake_images, batch_size)
         
@@ -293,8 +293,8 @@ class GenerativeEvaluator:
 
     def compute_ssim(self, recon_x, x, is_tanh=False):
         """
-        Calcula o Structural Similarity Index Measure (SSIM) em lotes (média).
-        Espera tensores PyTorch [N, C, H, W].
+        Calculates the Structural Similarity Index Measure (SSIM) in batches (mean).
+        Expects PyTorch tensors [N, C, H, W].
         """
         if is_tanh:
             recon_x = (recon_x + 1) / 2

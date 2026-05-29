@@ -1,5 +1,7 @@
 import argparse
 import os
+import random
+import numpy as np
 
 import torch
 import torch.nn as nn
@@ -73,9 +75,11 @@ def parse_args():
 
     parser.add_argument("--csv_path", default="data/train.csv")
     parser.add_argument("--img_dir", default="data/train")
+    parser.add_argument("--aug_csv_path", default=None, help="Path to the generated images CSV")
+    parser.add_argument("--aug_img_dir", default=None, help="Path to the generated images directory")
     parser.add_argument("--batch_size", type=int, default=32)
     parser.add_argument("--img_size", type=int, default=64)
-    parser.add_argument("--epochs", type=int, default=50)
+    parser.add_argument("--epochs", type=int, default=100)
     parser.add_argument("--learning_rate", type=float, default=0.001)
 
     # Required split: 70 / 15 / 15
@@ -88,6 +92,17 @@ def parse_args():
     return parser.parse_args()
 
 
+def set_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+
+
 def main():
     args = parse_args()
 
@@ -97,6 +112,7 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
+    print("Preparing datasets and dataloaders...")
     train_loader, val_loader, test_loader, classes = get_dataloaders(
         csv_path=args.csv_path,
         img_dir=args.img_dir,
@@ -106,150 +122,163 @@ def main():
         test_size=args.test_size,
         augment=False,
         normalize=True,
+        aug_csv_path=args.aug_csv_path,
+        aug_img_dir=args.aug_img_dir,
     )
 
     num_classes = len(classes)
     print(f"Number of classes: {num_classes}")
-    print(f"Experiment: {args.experiment_name}")
 
-    model = BaselineCNN(num_classes=num_classes).to(device)
-    optimizer = optim.Adam(model.parameters(), lr=args.learning_rate)
-    criterion = nn.CrossEntropyLoss()
+    seeds = [42, 43, 44, 45, 46]
 
-    train_losses = []
-    val_losses = []
-    train_accs = []
-    val_accs = []
+    for seed in seeds:
+        print(f"\n{'='*50}\nStarting training with Seed: {seed}\n{'='*50}")
+        set_seed(seed)
 
-    best_val_loss = float("inf")
-    best_val_acc = 0.0
-    best_model_path = os.path.join(args.save_dir, "baseline_best.pth")
+        current_experiment_name = f"{args.experiment_name}_seed_{seed}"
+        current_save_dir = os.path.join(args.save_dir, f"seed_{seed}")
+        os.makedirs(current_save_dir, exist_ok=True)
 
-    patience = 7
-    epochs_no_improve = 0
+        print(f"Experiment: {current_experiment_name}")
 
-    for epoch in range(args.epochs):
-        train_loss, train_acc = train_one_epoch(
-            model=model,
-            train_loader=train_loader,
-            criterion=criterion,
-            optimizer=optimizer,
-            device=device,
-        )
+        model = BaselineCNN(num_classes=num_classes).to(device)
+        optimizer = optim.Adam(model.parameters(), lr=args.learning_rate)
+        criterion = nn.CrossEntropyLoss()
 
-        val_loss, val_acc = validate(
-            model=model,
-            val_loader=val_loader,
-            criterion=criterion,
-            device=device,
-        )
+        train_losses = []
+        val_losses = []
+        train_accs = []
+        val_accs = []
 
-        train_losses.append(train_loss)
-        val_losses.append(val_loss)
-        train_accs.append(train_acc)
-        val_accs.append(val_acc)
+        best_val_loss = float("inf")
+        best_val_acc = 0.0
+        best_model_path = os.path.join(current_save_dir, "baseline_best.pth")
 
-        print(
-            f"Epoch [{epoch + 1}/{args.epochs}] "
-            f"Train Loss: {train_loss:.4f} | "
-            f"Train Acc: {train_acc:.4f} | "
-            f"Val Loss: {val_loss:.4f} | "
-            f"Val Acc: {val_acc:.4f}"
-        )
+        patience = 15
+        epochs_no_improve = 0
 
-        if val_loss < best_val_loss:
-            best_val_loss = val_loss
-            best_val_acc = val_acc
-            epochs_no_improve = 0
-
-            torch.save(
-                {
-                    "epoch": epoch + 1,
-                    "model_state_dict": model.state_dict(),
-                    "optimizer_state_dict": optimizer.state_dict(),
-                    "val_loss": val_loss,
-                    "val_acc": val_acc,
-                    "classes": classes,
-                    "experiment_name": args.experiment_name,
-                },
-                best_model_path,
+        for epoch in range(args.epochs):
+            train_loss, train_acc = train_one_epoch(
+                model=model,
+                train_loader=train_loader,
+                criterion=criterion,
+                optimizer=optimizer,
+                device=device,
             )
 
-            print(" -> New best model saved.")
+            val_loss, val_acc = validate(
+                model=model,
+                val_loader=val_loader,
+                criterion=criterion,
+                device=device,
+            )
 
-        else:
-            epochs_no_improve += 1
-            print(f" -> No improvement for {epochs_no_improve} epoch(s).")
+            train_losses.append(train_loss)
+            val_losses.append(val_loss)
+            train_accs.append(train_acc)
+            val_accs.append(val_acc)
 
-            if epochs_no_improve >= patience:
-                print(f"\nEarly stopping triggered at epoch {epoch + 1}")
-                break
+            print(
+                f"Epoch [{epoch + 1}/{args.epochs}] "
+                f"Train Loss: {train_loss:.4f} | "
+                f"Train Acc: {train_acc:.4f} | "
+                f"Val Loss: {val_loss:.4f} | "
+                f"Val Acc: {val_acc:.4f}"
+            )
 
-    print("\nTraining finished.")
+            if val_loss < best_val_loss:
+                best_val_loss = val_loss
+                best_val_acc = val_acc
+                epochs_no_improve = 0
 
-    plot_training_curves(
-        train_losses=train_losses,
-        val_losses=val_losses,
-        train_accs=train_accs,
-        val_accs=val_accs,
-        save_path=os.path.join(args.save_dir, "training_curves.png"),
-    )
+                torch.save(
+                    {
+                        "epoch": epoch + 1,
+                        "model_state_dict": model.state_dict(),
+                        "optimizer_state_dict": optimizer.state_dict(),
+                        "val_loss": val_loss,
+                        "val_acc": val_acc,
+                        "classes": classes,
+                        "experiment_name": current_experiment_name,
+                    },
+                    best_model_path,
+                )
 
-    checkpoint = torch.load(best_model_path, map_location=device)
-    model.load_state_dict(checkpoint["model_state_dict"])
+                print(" -> New best model saved.")
 
-    val_metrics, val_report, y_true_val, y_pred_val = evaluate_model(
-        model=model,
-        dataloader=val_loader,
-        device=device,
-        class_names=classes,
-    )
+            else:
+                epochs_no_improve += 1
+                print(f" -> No improvement for {epochs_no_improve} epoch(s).")
 
-    print("\nValidation report:\n")
-    print(val_report)
+                if epochs_no_improve >= patience:
+                    print(f"\nEarly stopping triggered at epoch {epoch + 1}")
+                    break
 
-    append_metrics_to_csv(
-        metrics=val_metrics,
-        epochs=len(train_losses),
-        experiment_name=args.experiment_name,
-        best_val_acc=best_val_acc,
-        save_path="results/all_experiments.csv",
-    )
+        print(f"\nTraining finished for seed {seed}.")
 
-    save_confusion_matrix(
-        y_true=y_true_val,
-        y_pred=y_pred_val,
-        class_names=classes,
-        save_path=os.path.join(args.save_dir, "confusion_matrix_validation.png"),
-    )
+        plot_training_curves(
+            train_losses=train_losses,
+            val_losses=val_losses,
+            train_accs=train_accs,
+            val_accs=val_accs,
+            save_path=os.path.join(current_save_dir, "training_curves.png"),
+        )
 
-    if test_loader is not None:
-        test_metrics, test_report, y_true_test, y_pred_test = evaluate_model(
+        checkpoint = torch.load(best_model_path, map_location=device)
+        model.load_state_dict(checkpoint["model_state_dict"])
+
+        val_metrics, val_report, y_true_val, y_pred_val = evaluate_model(
             model=model,
-            dataloader=test_loader,
+            dataloader=val_loader,
             device=device,
             class_names=classes,
         )
 
-        print("\nTest report:\n")
-        print(test_report)
+        print("\nValidation report:\n")
+        print(val_report)
 
         append_metrics_to_csv(
-            metrics=test_metrics,
+            metrics=val_metrics,
             epochs=len(train_losses),
-            experiment_name=args.experiment_name,
+            experiment_name=current_experiment_name,
             best_val_acc=best_val_acc,
             save_path="results/all_experiments.csv",
         )
 
         save_confusion_matrix(
-            y_true=y_true_test,
-            y_pred=y_pred_test,
+            y_true=y_true_val,
+            y_pred=y_pred_val,
             class_names=classes,
-            save_path=os.path.join(args.save_dir, "confusion_matrix_test.png"),
+            save_path=os.path.join(current_save_dir, "confusion_matrix_validation.png"),
         )
 
-    print("\nBaseline evaluation completed.")
+        if test_loader is not None:
+            test_metrics, test_report, y_true_test, y_pred_test = evaluate_model(
+                model=model,
+                dataloader=test_loader,
+                device=device,
+                class_names=classes,
+            )
+
+            print("\nTest report:\n")
+            print(test_report)
+
+            append_metrics_to_csv(
+                metrics=test_metrics,
+                epochs=len(train_losses),
+                experiment_name=f"Test_{current_experiment_name}",
+                best_val_acc=best_val_acc,
+                save_path="results/all_experiments.csv",
+            )
+
+            save_confusion_matrix(
+                y_true=y_true_test,
+                y_pred=y_pred_test,
+                class_names=classes,
+                save_path=os.path.join(current_save_dir, "confusion_matrix_test.png"),
+            )
+
+        print(f"\nBaseline evaluation completed for seed {seed}.")
 
 
 if __name__ == "__main__":

@@ -25,7 +25,9 @@ class ButterflyDataset(data.Dataset):
 
     def __getitem__(self, idx):
         img_name = self.img_labels.iloc[idx]["filename"]
-        img_path = os.path.join(self.img_dir, img_name)
+        
+        current_img_dir = self.img_labels.iloc[idx].get('img_dir', self.img_dir)
+        img_path = os.path.join(current_img_dir, img_name)
 
         image = Image.open(img_path).convert("RGB")
 
@@ -55,6 +57,8 @@ def get_dataloaders(
     test_size=0.15,
     augment=False,
     normalize=True,
+    aug_csv_path=None,
+    aug_img_dir=None,
     num_workers=2,
 ):
     assert val_size + test_size < 1.0, (
@@ -62,6 +66,7 @@ def get_dataloaders(
     )
 
     df = pd.read_csv(csv_path)
+    df['img_dir'] = img_dir 
     classes = sorted(df["label"].unique())
 
     pin_memory = torch.cuda.is_available()
@@ -77,7 +82,7 @@ def get_dataloaders(
         train_transforms += [
             transforms.RandomHorizontalFlip(p=0.5),
 
-            # Reflect padding before rotation avoids black corners.
+            # Reflect padding before rotation to avoid black corners.
             transforms.Pad(
                 padding=8,
                 padding_mode="reflect"
@@ -169,6 +174,12 @@ def get_dataloaders(
     else:
         train_df = train_val_df
         val_loader = None
+
+    if aug_csv_path is not None and aug_img_dir is not None:
+        aug_df = pd.read_csv(aug_csv_path)
+        aug_df['img_dir'] = aug_img_dir
+        aug_df = aug_df[~aug_df['filename'].isin(df['filename'])]
+        train_df = pd.concat([train_df, aug_df], ignore_index=True)
 
     train_dataset = ButterflyDataset(
         df=train_df,
