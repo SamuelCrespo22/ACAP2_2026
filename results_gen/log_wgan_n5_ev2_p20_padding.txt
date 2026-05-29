@@ -1,0 +1,455 @@
+Using device: cuda
+Experiment: WGAN n5 ev2 p20 padding
+C:\Users\Cláudio\Desktop\Universidade\4ºAno\2ºSemestre\ACA\ACAP2_2026\venv\lib\site-packages\torch\autograd\graph.py:869: UserWarning: Attempting to run cuBLAS, but there was no current CUDA context! Attempting to set the primary context... (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\pytorch\aten\src\ATen\cuda\CublasHandlePool.cpp:335.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+Epoch [1/300] Loss C: -54.0500 | Loss G: 78.8007
+Epoch [2/300] Loss C: -72.3377 | Loss G: 134.1697 | FID: 318.3298 | IS: 1.8611
+ -> New best model saved.
+Epoch [3/300] Loss C: -54.7534 | Loss G: 114.3253
+Epoch [4/300] Loss C: -50.2182 | Loss G: 161.1894 | FID: 303.0743 | IS: 1.7983
+ -> New best model saved.
+Epoch [5/300] Loss C: -45.0344 | Loss G: 147.7767
+Epoch [6/300] Loss C: -38.8172 | Loss G: 120.1658 | FID: 306.8592 | IS: 1.8314
+ -> No improvement for 1 eval(s).
+Epoch [7/300] Loss C: -29.1352 | Loss G: 104.1411
+Epoch [8/300] Loss C: -26.7948 | Loss G: 95.2176 | FID: 325.3299 | IS: 1.6271
+ -> No improvement for 2 eval(s).
+Epoch [9/300] Loss C: -22.4502 | Loss G: 84.5186
+Epoch [10/300] Loss C: -19.6764 | Loss G: 97.1188 | FID: 323.7311 | IS: 1.6422
+ -> No improvement for 3 eval(s).
+Epoch [11/300] Loss C: -17.8369 | Loss G: 74.1627
+Epoch [12/300] Loss C: -16.2458 | Loss G: 56.5283 | FID: 317.5810 | IS: 1.5811
+ -> No improvement for 4 eval(s).
+Epoch [13/300] Loss C: -14.8952 | Loss G: 49.3089
+Epoch [14/300] Loss C: -13.9851 | Loss G: 34.9007 | FID: 291.0257 | IS: 1.5999
+ -> New best model saved.
+Epoch [15/300] Loss C: -13.0477 | Loss G: 17.9531
+Epoch [16/300] Loss C: -12.5679 | Loss G: 16.5954 | FID: 258.1191 | IS: 1.6545
+ -> New best model saved.
+Epoch [17/300] Loss C: -11.9387 | Loss G: 8.3198
+Epoch [18/300] Loss C: -11.8817 | Loss G: 1.9030 | FID: 259.6952 | IS: 1.6488
+ -> No improvement for 1 eval(s).
+Epoch [19/300] Loss C: -11.9761 | Loss G: -10.7731
+Epoch [20/300] Loss C: -12.0855 | Loss G: -25.7304 | FID: 272.9458 | IS: 1.5117
+ -> No improvement for 2 eval(s).
+Epoch [21/300] Loss C: -12.2144 | Loss G: -41.4140
+Epoch [22/300] Loss C: -12.1904 | Loss G: -38.2953 | FID: 264.0404 | IS: 1.4759
+ -> No improvement for 3 eval(s).
+Epoch [23/300] Loss C: -12.5702 | Loss G: -37.4847
+Epoch [24/300] Loss C: -12.5122 | Loss G: -28.0442 | FID: 276.8976 | IS: 1.4777
+ -> No improvement for 4 eval(s).
+Epoch [25/300] Loss C: -12.3485 | Loss G: -25.4796
+Epoch [26/300] Loss C: -12.4734 | Loss G: -22.7539 | FID: 280.4345 | IS: 1.4471
+ -> No improvement for 5 eval(s).
+Epoch [27/300] Loss C: -12.7766 | Loss G: -34.5494
+Epoch [28/300] Loss C: -12.6229 | Loss G: -30.1557 | FID: 272.0906 | IS: 1.5001
+ -> No improvement for 6 eval(s).
+Epoch [29/300] Loss C: -12.6203 | Loss G: -22.1369
+Epoch [30/300] Loss C: -12.1681 | Loss G: -16.1610 | FID: 268.1855 | IS: 1.5561
+ -> No improvement for 7 eval(s).
+Epoch [31/300] Loss C: -11.9152 | Loss G: -27.6897
+Epoch [32/300] Loss C: -11.3429 | Loss G: -6.1306 | FID: 272.8526 | IS: 1.5419
+ -> No improvement for 8 eval(s).
+Epoch [33/300] Loss C: -11.1469 | Loss G: -15.7222
+Epoch [34/300] Loss C: -10.7443 | Loss G: -27.9129 | FID: 270.8694 | IS: 1.5306
+ -> No improvement for 9 eval(s).
+Epoch [35/300] Loss C: -10.4950 | Loss G: -66.3435
+Epoch [36/300] Loss C: -10.2838 | Loss G: -74.8688 | FID: 272.3514 | IS: 1.5860
+ -> No improvement for 10 eval(s).
+Epoch [37/300] Loss C: -10.2808 | Loss G: -45.5815
+Epoch [38/300] Loss C: -10.3922 | Loss G: -56.0647 | FID: 268.6155 | IS: 1.5160
+ -> No improvement for 11 eval(s).
+Epoch [39/300] Loss C: -10.2216 | Loss G: -33.4623
+Epoch [40/300] Loss C: -10.0167 | Loss G: -62.3625 | FID: 266.7346 | IS: 1.6015
+ -> No improvement for 12 eval(s).
+Epoch [41/300] Loss C: -9.7644 | Loss G: -63.0762
+Epoch [42/300] Loss C: -9.5648 | Loss G: -101.7719 | FID: 266.5923 | IS: 1.5867
+ -> No improvement for 13 eval(s).
+Epoch [43/300] Loss C: -9.2484 | Loss G: -107.2446
+Epoch [44/300] Loss C: -8.9172 | Loss G: -107.4549 | FID: 263.4942 | IS: 1.6458
+ -> No improvement for 14 eval(s).
+Epoch [45/300] Loss C: -8.8316 | Loss G: -107.6761
+Epoch [46/300] Loss C: -8.7429 | Loss G: -101.6098 | FID: 262.2132 | IS: 1.6966
+ -> No improvement for 15 eval(s).
+Epoch [47/300] Loss C: -8.5731 | Loss G: -126.3701
+Epoch [48/300] Loss C: -8.4992 | Loss G: -155.7897 | FID: 260.9951 | IS: 1.6383
+ -> No improvement for 16 eval(s).
+Epoch [49/300] Loss C: -8.5618 | Loss G: -178.5994
+Epoch [50/300] Loss C: -8.4408 | Loss G: -186.8039 | FID: 267.9421 | IS: 1.5844
+ -> No improvement for 17 eval(s).
+Epoch [51/300] Loss C: -8.4686 | Loss G: -231.8661
+Epoch [52/300] Loss C: -8.4521 | Loss G: -237.1552 | FID: 267.4707 | IS: 1.6169
+ -> No improvement for 18 eval(s).
+Epoch [53/300] Loss C: -7.9950 | Loss G: -221.1481
+Epoch [54/300] Loss C: -8.0436 | Loss G: -241.7212 | FID: 263.2218 | IS: 1.6957
+ -> No improvement for 19 eval(s).
+Epoch [55/300] Loss C: -8.0048 | Loss G: -239.8794
+Epoch [56/300] Loss C: -7.6948 | Loss G: -258.8240 | FID: 269.2116 | IS: 1.6275
+ -> No improvement for 20 eval(s).
+Epoch [57/300] Loss C: -7.7328 | Loss G: -275.7360
+Epoch [58/300] Loss C: -7.6215 | Loss G: -262.3178 | FID: 272.4213 | IS: 1.6795
+ -> No improvement for 21 eval(s).
+Epoch [59/300] Loss C: -7.8140 | Loss G: -262.4933
+Epoch [60/300] Loss C: -7.5999 | Loss G: -263.8950 | FID: 267.4526 | IS: 1.6638
+ -> No improvement for 22 eval(s).
+Epoch [61/300] Loss C: -7.3431 | Loss G: -269.8058
+Epoch [62/300] Loss C: -7.4346 | Loss G: -292.3177 | FID: 263.9915 | IS: 1.7021
+ -> No improvement for 23 eval(s).
+Epoch [63/300] Loss C: -7.2514 | Loss G: -291.1205
+Epoch [64/300] Loss C: -6.4492 | Loss G: -231.2768 | FID: 267.2498 | IS: 1.6928
+ -> No improvement for 24 eval(s).
+Epoch [65/300] Loss C: -6.5816 | Loss G: -201.8620
+Epoch [66/300] Loss C: -6.5733 | Loss G: -253.6142 | FID: 272.8978 | IS: 1.6641
+ -> No improvement for 25 eval(s).
+Epoch [67/300] Loss C: -6.7011 | Loss G: -271.8912
+Epoch [68/300] Loss C: -6.8303 | Loss G: -339.8660 | FID: 270.5566 | IS: 1.6683
+ -> No improvement for 26 eval(s).
+Epoch [69/300] Loss C: -6.5800 | Loss G: -342.4745
+Epoch [70/300] Loss C: -6.4954 | Loss G: -338.4306 | FID: 268.5021 | IS: 1.6760
+ -> No improvement for 27 eval(s).
+Epoch [71/300] Loss C: -6.6721 | Loss G: -358.1271
+Epoch [72/300] Loss C: -6.6364 | Loss G: -358.8090 | FID: 266.9384 | IS: 1.6501
+ -> No improvement for 28 eval(s).
+Epoch [73/300] Loss C: -6.7255 | Loss G: -416.5121
+Epoch [74/300] Loss C: -6.6296 | Loss G: -378.8517 | FID: 262.5140 | IS: 1.6806
+ -> No improvement for 29 eval(s).
+Epoch [75/300] Loss C: -6.6749 | Loss G: -353.3654
+Epoch [76/300] Loss C: -6.6199 | Loss G: -376.0156 | FID: 260.6618 | IS: 1.7064
+ -> No improvement for 30 eval(s).
+Epoch [77/300] Loss C: -6.7230 | Loss G: -374.4231
+Epoch [78/300] Loss C: -6.7000 | Loss G: -341.6209 | FID: 270.8697 | IS: 1.6251
+ -> No improvement for 31 eval(s).
+Epoch [79/300] Loss C: -6.5537 | Loss G: -254.3969
+Epoch [80/300] Loss C: -6.6009 | Loss G: -290.5528 | FID: 262.9732 | IS: 1.6853
+ -> No improvement for 32 eval(s).
+Epoch [81/300] Loss C: -6.6507 | Loss G: -305.1413
+Epoch [82/300] Loss C: -6.3572 | Loss G: -290.1212 | FID: 258.5551 | IS: 1.7009
+ -> No improvement for 33 eval(s).
+Epoch [83/300] Loss C: -6.3701 | Loss G: -284.1206
+Epoch [84/300] Loss C: -6.4491 | Loss G: -327.0314 | FID: 266.8960 | IS: 1.6673
+ -> No improvement for 34 eval(s).
+Epoch [85/300] Loss C: -6.5392 | Loss G: -335.4912
+Epoch [86/300] Loss C: -6.1494 | Loss G: -312.9124 | FID: 264.6250 | IS: 1.6682
+ -> No improvement for 35 eval(s).
+Epoch [87/300] Loss C: -6.1491 | Loss G: -307.6224
+Epoch [88/300] Loss C: -6.1625 | Loss G: -320.1896 | FID: 261.3674 | IS: 1.7608
+ -> No improvement for 36 eval(s).
+Epoch [89/300] Loss C: -6.1996 | Loss G: -322.4567
+Epoch [90/300] Loss C: -6.0973 | Loss G: -321.4327 | FID: 265.2069 | IS: 1.7106
+ -> No improvement for 37 eval(s).
+Epoch [91/300] Loss C: -6.1102 | Loss G: -278.7370
+Epoch [92/300] Loss C: -6.1664 | Loss G: -293.4307 | FID: 262.9763 | IS: 1.7357
+ -> No improvement for 38 eval(s).
+Epoch [93/300] Loss C: -6.0335 | Loss G: -296.4577
+Epoch [94/300] Loss C: -6.0097 | Loss G: -261.5697 | FID: 263.3752 | IS: 1.7179
+ -> No improvement for 39 eval(s).
+Epoch [95/300] Loss C: -5.9009 | Loss G: -266.7613
+Epoch [96/300] Loss C: -6.0198 | Loss G: -275.2105 | FID: 260.8928 | IS: 1.7589
+ -> No improvement for 40 eval(s).
+Epoch [97/300] Loss C: -5.9255 | Loss G: -313.0769
+Epoch [98/300] Loss C: -5.9595 | Loss G: -306.9130 | FID: 258.9717 | IS: 1.7229
+ -> No improvement for 41 eval(s).
+Epoch [99/300] Loss C: -5.9265 | Loss G: -294.2360
+Epoch [100/300] Loss C: -5.7744 | Loss G: -283.5034 | FID: 257.7636 | IS: 1.7406
+ -> New best model saved.
+Epoch [101/300] Loss C: -5.8190 | Loss G: -291.3461
+Epoch [102/300] Loss C: -5.7191 | Loss G: -255.9265 | FID: 257.3731 | IS: 1.8202
+ -> New best model saved.
+Epoch [103/300] Loss C: -5.7090 | Loss G: -288.5255
+Epoch [104/300] Loss C: -5.8489 | Loss G: -258.0163 | FID: 263.6411 | IS: 1.7656
+ -> No improvement for 1 eval(s).
+Epoch [105/300] Loss C: -5.7547 | Loss G: -239.2799
+Epoch [106/300] Loss C: -5.6840 | Loss G: -243.9446 | FID: 263.0982 | IS: 1.7263
+ -> No improvement for 2 eval(s).
+Epoch [107/300] Loss C: -5.7377 | Loss G: -241.5032
+Epoch [108/300] Loss C: -5.7923 | Loss G: -229.1332 | FID: 259.5690 | IS: 1.7483
+ -> No improvement for 3 eval(s).
+Epoch [109/300] Loss C: -5.5175 | Loss G: -245.7559
+Epoch [110/300] Loss C: -5.7565 | Loss G: -242.3721 | FID: 256.3449 | IS: 1.8022
+ -> New best model saved.
+Epoch [111/300] Loss C: -5.5731 | Loss G: -232.9442
+Epoch [112/300] Loss C: -5.7513 | Loss G: -205.7395 | FID: 259.6375 | IS: 1.7221
+ -> No improvement for 1 eval(s).
+Epoch [113/300] Loss C: -5.7405 | Loss G: -277.4474
+Epoch [114/300] Loss C: -5.8500 | Loss G: -269.7314 | FID: 261.8314 | IS: 1.6925
+ -> No improvement for 2 eval(s).
+Epoch [115/300] Loss C: -5.7332 | Loss G: -248.4731
+Epoch [116/300] Loss C: -5.7842 | Loss G: -286.0112 | FID: 260.7406 | IS: 1.7262
+ -> No improvement for 3 eval(s).
+Epoch [117/300] Loss C: -5.5890 | Loss G: -258.0249
+Epoch [118/300] Loss C: -5.7296 | Loss G: -242.6524 | FID: 255.7483 | IS: 1.7456
+ -> New best model saved.
+Epoch [119/300] Loss C: -5.5582 | Loss G: -225.2361
+Epoch [120/300] Loss C: -5.6809 | Loss G: -206.2104 | FID: 264.5901 | IS: 1.7075
+ -> No improvement for 1 eval(s).
+Epoch [121/300] Loss C: -5.5429 | Loss G: -160.6524
+Epoch [122/300] Loss C: -5.5043 | Loss G: -163.9664 | FID: 260.5196 | IS: 1.7223
+ -> No improvement for 2 eval(s).
+Epoch [123/300] Loss C: -5.5511 | Loss G: -152.2662
+Epoch [124/300] Loss C: -5.6006 | Loss G: -167.3769 | FID: 259.8043 | IS: 1.7477
+ -> No improvement for 3 eval(s).
+Epoch [125/300] Loss C: -5.4134 | Loss G: -152.6774
+Epoch [126/300] Loss C: -5.6477 | Loss G: -169.7105 | FID: 258.2056 | IS: 1.7865
+ -> No improvement for 4 eval(s).
+Epoch [127/300] Loss C: -5.4446 | Loss G: -195.1000
+Epoch [128/300] Loss C: -5.5164 | Loss G: -193.6852 | FID: 256.7952 | IS: 1.7825
+ -> No improvement for 5 eval(s).
+Epoch [129/300] Loss C: -5.3916 | Loss G: -212.9535
+Epoch [130/300] Loss C: -5.5733 | Loss G: -201.4998 | FID: 249.9194 | IS: 1.8338
+ -> New best model saved.
+Epoch [131/300] Loss C: -5.5606 | Loss G: -159.2310
+Epoch [132/300] Loss C: -5.1111 | Loss G: -130.1315 | FID: 253.4936 | IS: 1.8009
+ -> No improvement for 1 eval(s).
+Epoch [133/300] Loss C: -5.2055 | Loss G: -85.2067
+Epoch [134/300] Loss C: -5.3886 | Loss G: -90.2920 | FID: 250.4453 | IS: 1.8240
+ -> No improvement for 2 eval(s).
+Epoch [135/300] Loss C: -5.3396 | Loss G: -121.7566
+Epoch [136/300] Loss C: -5.2754 | Loss G: -151.0068 | FID: 250.1616 | IS: 1.8347
+ -> No improvement for 3 eval(s).
+Epoch [137/300] Loss C: -5.3251 | Loss G: -161.1120
+Epoch [138/300] Loss C: -5.3199 | Loss G: -166.6290 | FID: 251.4788 | IS: 1.7852
+ -> No improvement for 4 eval(s).
+Epoch [139/300] Loss C: -5.4258 | Loss G: -140.5463
+Epoch [140/300] Loss C: -5.3247 | Loss G: -147.8735 | FID: 245.6397 | IS: 1.8443
+ -> New best model saved.
+Epoch [141/300] Loss C: -5.2964 | Loss G: -124.9375
+Epoch [142/300] Loss C: -5.2532 | Loss G: -89.6001 | FID: 249.0416 | IS: 1.8954
+ -> No improvement for 1 eval(s).
+Epoch [143/300] Loss C: -5.3093 | Loss G: -70.4445
+Epoch [144/300] Loss C: -5.2235 | Loss G: -62.3486 | FID: 251.1066 | IS: 1.7952
+ -> No improvement for 2 eval(s).
+Epoch [145/300] Loss C: -5.2856 | Loss G: -76.0943
+Epoch [146/300] Loss C: -5.4602 | Loss G: -63.1345 | FID: 252.4213 | IS: 1.8239
+ -> No improvement for 3 eval(s).
+Epoch [147/300] Loss C: -5.0167 | Loss G: -44.6570
+Epoch [148/300] Loss C: -5.1564 | Loss G: -35.2739 | FID: 254.2751 | IS: 1.8128
+ -> No improvement for 4 eval(s).
+Epoch [149/300] Loss C: -5.2754 | Loss G: -62.3587
+Epoch [150/300] Loss C: -5.2839 | Loss G: -88.8003 | FID: 246.7646 | IS: 1.9237
+ -> No improvement for 5 eval(s).
+Epoch [151/300] Loss C: -5.3672 | Loss G: -79.9901
+Epoch [152/300] Loss C: -5.3157 | Loss G: -116.3140 | FID: 240.3987 | IS: 1.9170
+ -> New best model saved.
+Epoch [153/300] Loss C: -5.3177 | Loss G: -111.6953
+Epoch [154/300] Loss C: -5.2093 | Loss G: -105.6656 | FID: 243.7239 | IS: 2.0469
+ -> No improvement for 1 eval(s).
+Epoch [155/300] Loss C: -5.3189 | Loss G: -106.9699
+Epoch [156/300] Loss C: -5.2660 | Loss G: -114.4809 | FID: 240.9282 | IS: 1.9225
+ -> No improvement for 2 eval(s).
+Epoch [157/300] Loss C: -5.1867 | Loss G: -66.3254
+Epoch [158/300] Loss C: -5.2541 | Loss G: -52.7462 | FID: 245.2322 | IS: 1.8814
+ -> No improvement for 3 eval(s).
+Epoch [159/300] Loss C: -5.1432 | Loss G: -91.4096
+Epoch [160/300] Loss C: -5.1277 | Loss G: -100.6255 | FID: 240.5468 | IS: 1.9826
+ -> No improvement for 4 eval(s).
+Epoch [161/300] Loss C: -5.1523 | Loss G: -121.4929
+Epoch [162/300] Loss C: -5.2316 | Loss G: -126.4163 | FID: 243.3641 | IS: 1.9440
+ -> No improvement for 5 eval(s).
+Epoch [163/300] Loss C: -5.2270 | Loss G: -122.0387
+Epoch [164/300] Loss C: -5.2887 | Loss G: -149.9297 | FID: 241.2167 | IS: 1.9660
+ -> No improvement for 6 eval(s).
+Epoch [165/300] Loss C: -5.2631 | Loss G: -105.4564
+Epoch [166/300] Loss C: -5.2211 | Loss G: -72.1561 | FID: 240.3468 | IS: 1.9736
+ -> New best model saved.
+Epoch [167/300] Loss C: -5.3247 | Loss G: -90.1764
+Epoch [168/300] Loss C: -5.1878 | Loss G: -38.9781 | FID: 238.9341 | IS: 1.9530
+ -> New best model saved.
+Epoch [169/300] Loss C: -5.2989 | Loss G: 10.7066
+Epoch [170/300] Loss C: -5.2929 | Loss G: 5.6237 | FID: 240.1288 | IS: 1.9546
+ -> No improvement for 1 eval(s).
+Epoch [171/300] Loss C: -5.2763 | Loss G: 9.3973
+Epoch [172/300] Loss C: -5.3882 | Loss G: 16.6343 | FID: 240.3792 | IS: 1.8930
+ -> No improvement for 2 eval(s).
+Epoch [173/300] Loss C: -5.3928 | Loss G: -7.0088
+Epoch [174/300] Loss C: -5.2901 | Loss G: -1.4588 | FID: 235.1209 | IS: 1.9514
+ -> New best model saved.
+Epoch [175/300] Loss C: -5.3160 | Loss G: 18.1120
+Epoch [176/300] Loss C: -5.3533 | Loss G: 2.7388 | FID: 237.5112 | IS: 2.0314
+ -> No improvement for 1 eval(s).
+Epoch [177/300] Loss C: -5.2266 | Loss G: 10.8772
+Epoch [178/300] Loss C: -5.1966 | Loss G: 26.3782 | FID: 237.5122 | IS: 2.0122
+ -> No improvement for 2 eval(s).
+Epoch [179/300] Loss C: -5.2679 | Loss G: 31.7841
+Epoch [180/300] Loss C: -5.1743 | Loss G: 6.9783 | FID: 238.9829 | IS: 2.0698
+ -> No improvement for 3 eval(s).
+Epoch [181/300] Loss C: -5.1312 | Loss G: 24.7420
+Epoch [182/300] Loss C: -5.2115 | Loss G: 27.1604 | FID: 234.2941 | IS: 2.0130
+ -> New best model saved.
+Epoch [183/300] Loss C: -5.2097 | Loss G: 18.0274
+Epoch [184/300] Loss C: -5.1343 | Loss G: -8.9932 | FID: 233.4407 | IS: 2.0602
+ -> New best model saved.
+Epoch [185/300] Loss C: -5.1704 | Loss G: -4.1310
+Epoch [186/300] Loss C: -5.2002 | Loss G: -21.5942 | FID: 233.0288 | IS: 2.0372
+ -> New best model saved.
+Epoch [187/300] Loss C: -5.2272 | Loss G: 16.2383
+Epoch [188/300] Loss C: -5.2834 | Loss G: 55.0233 | FID: 233.9209 | IS: 1.9530
+ -> No improvement for 1 eval(s).
+Epoch [189/300] Loss C: -5.2925 | Loss G: 46.7024
+Epoch [190/300] Loss C: -5.1727 | Loss G: 81.6077 | FID: 234.9620 | IS: 2.0923
+ -> No improvement for 2 eval(s).
+Epoch [191/300] Loss C: -5.2787 | Loss G: 77.6860
+Epoch [192/300] Loss C: -5.1797 | Loss G: 72.3046 | FID: 230.6481 | IS: 2.0233
+ -> New best model saved.
+Epoch [193/300] Loss C: -5.1851 | Loss G: 70.0168
+Epoch [194/300] Loss C: -5.2923 | Loss G: 72.9739 | FID: 228.9547 | IS: 2.0662
+ -> New best model saved.
+Epoch [195/300] Loss C: -5.1478 | Loss G: 106.1897
+Epoch [196/300] Loss C: -5.2076 | Loss G: 126.6526 | FID: 229.7199 | IS: 2.0273
+ -> No improvement for 1 eval(s).
+Epoch [197/300] Loss C: -5.2337 | Loss G: 125.3350
+Epoch [198/300] Loss C: -5.1801 | Loss G: 128.1462 | FID: 232.1829 | IS: 2.0429
+ -> No improvement for 2 eval(s).
+Epoch [199/300] Loss C: -5.0887 | Loss G: 107.5907
+Epoch [200/300] Loss C: -5.1454 | Loss G: 130.7397 | FID: 226.2051 | IS: 2.0999
+ -> New best model saved.
+Epoch [201/300] Loss C: -4.9869 | Loss G: 150.4329
+Epoch [202/300] Loss C: -5.2731 | Loss G: 143.0672 | FID: 225.9676 | IS: 2.0719
+ -> New best model saved.
+Epoch [203/300] Loss C: -5.1929 | Loss G: 126.5771
+Epoch [204/300] Loss C: -5.0891 | Loss G: 107.4972 | FID: 226.0061 | IS: 2.0953
+ -> No improvement for 1 eval(s).
+Epoch [205/300] Loss C: -5.1168 | Loss G: 100.8267
+Epoch [206/300] Loss C: -5.1298 | Loss G: 88.0549 | FID: 223.5394 | IS: 2.1020
+ -> New best model saved.
+Epoch [207/300] Loss C: -5.0331 | Loss G: 91.7519
+Epoch [208/300] Loss C: -4.9586 | Loss G: 113.0375 | FID: 224.8872 | IS: 2.1667
+ -> No improvement for 1 eval(s).
+Epoch [209/300] Loss C: -5.1460 | Loss G: 164.1762
+Epoch [210/300] Loss C: -5.0031 | Loss G: 124.2006 | FID: 224.3864 | IS: 2.1876
+ -> No improvement for 2 eval(s).
+Epoch [211/300] Loss C: -5.2277 | Loss G: 123.6601
+Epoch [212/300] Loss C: -5.0795 | Loss G: 140.0567 | FID: 225.6253 | IS: 2.0383
+ -> No improvement for 3 eval(s).
+Epoch [213/300] Loss C: -5.1222 | Loss G: 97.9218
+Epoch [214/300] Loss C: -5.0974 | Loss G: 76.4885 | FID: 226.2077 | IS: 2.1517
+ -> No improvement for 4 eval(s).
+Epoch [215/300] Loss C: -5.0918 | Loss G: 68.4616
+Epoch [216/300] Loss C: -4.9738 | Loss G: 69.6775 | FID: 223.7056 | IS: 2.2073
+ -> No improvement for 5 eval(s).
+Epoch [217/300] Loss C: -4.9823 | Loss G: 26.8844
+Epoch [218/300] Loss C: -5.1485 | Loss G: 13.0395 | FID: 223.4044 | IS: 2.2141
+ -> New best model saved.
+Epoch [219/300] Loss C: -5.0934 | Loss G: 12.3086
+Epoch [220/300] Loss C: -4.9801 | Loss G: 2.2346 | FID: 223.7866 | IS: 2.2191
+ -> No improvement for 1 eval(s).
+Epoch [221/300] Loss C: -5.1099 | Loss G: 9.3249
+Epoch [222/300] Loss C: -5.0884 | Loss G: 24.3957 | FID: 223.7054 | IS: 2.0792
+ -> No improvement for 2 eval(s).
+Epoch [223/300] Loss C: -5.0400 | Loss G: 22.5257
+Epoch [224/300] Loss C: -5.0851 | Loss G: 15.5790 | FID: 220.3995 | IS: 2.1867
+ -> New best model saved.
+Epoch [225/300] Loss C: -5.0441 | Loss G: 16.2310
+Epoch [226/300] Loss C: -5.0160 | Loss G: 12.4534 | FID: 224.0965 | IS: 2.2101
+ -> No improvement for 1 eval(s).
+Epoch [227/300] Loss C: -4.9569 | Loss G: 49.1145
+Epoch [228/300] Loss C: -5.0362 | Loss G: 41.1986 | FID: 222.7452 | IS: 2.2076
+ -> No improvement for 2 eval(s).
+Epoch [229/300] Loss C: -4.9496 | Loss G: 34.4171
+Epoch [230/300] Loss C: -4.9691 | Loss G: 56.6908 | FID: 223.1366 | IS: 2.2212
+ -> No improvement for 3 eval(s).
+Epoch [231/300] Loss C: -5.0039 | Loss G: 53.0476
+Epoch [232/300] Loss C: -4.9503 | Loss G: 63.2887 | FID: 223.5169 | IS: 2.2114
+ -> No improvement for 4 eval(s).
+Epoch [233/300] Loss C: -4.8619 | Loss G: 70.8143
+Epoch [234/300] Loss C: -4.9508 | Loss G: 45.2798 | FID: 220.0070 | IS: 2.1824
+ -> New best model saved.
+Epoch [235/300] Loss C: -4.9498 | Loss G: 63.0878
+Epoch [236/300] Loss C: -4.9064 | Loss G: 46.7687 | FID: 220.1117 | IS: 2.3406
+ -> No improvement for 1 eval(s).
+Epoch [237/300] Loss C: -4.9014 | Loss G: 55.6297
+Epoch [238/300] Loss C: -4.8356 | Loss G: 50.9302 | FID: 221.4302 | IS: 2.3252
+ -> No improvement for 2 eval(s).
+Epoch [239/300] Loss C: -4.8685 | Loss G: 57.0523
+Epoch [240/300] Loss C: -4.9003 | Loss G: 56.4538 | FID: 219.9716 | IS: 2.1595
+ -> New best model saved.
+Epoch [241/300] Loss C: -4.9558 | Loss G: 96.8247
+Epoch [242/300] Loss C: -4.9648 | Loss G: 86.7721 | FID: 222.8235 | IS: 2.2093
+ -> No improvement for 1 eval(s).
+Epoch [243/300] Loss C: -4.9388 | Loss G: 68.5440
+Epoch [244/300] Loss C: -4.9511 | Loss G: 55.3869 | FID: 222.3862 | IS: 2.2157
+ -> No improvement for 2 eval(s).
+Epoch [245/300] Loss C: -4.7598 | Loss G: 61.3016
+Epoch [246/300] Loss C: -4.7710 | Loss G: 42.0887 | FID: 219.9219 | IS: 2.1991
+ -> New best model saved.
+Epoch [247/300] Loss C: -4.7751 | Loss G: 36.8711
+Epoch [248/300] Loss C: -4.7643 | Loss G: 26.9613 | FID: 220.5092 | IS: 2.2202
+ -> No improvement for 1 eval(s).
+Epoch [249/300] Loss C: -4.8487 | Loss G: 24.0722
+Epoch [250/300] Loss C: -4.9667 | Loss G: 56.5139 | FID: 221.1241 | IS: 2.2166
+ -> No improvement for 2 eval(s).
+Epoch [251/300] Loss C: -4.8312 | Loss G: 62.0645
+Epoch [252/300] Loss C: -4.9565 | Loss G: 67.3779 | FID: 220.9287 | IS: 2.2323
+ -> No improvement for 3 eval(s).
+Epoch [253/300] Loss C: -4.7199 | Loss G: 85.2686
+Epoch [254/300] Loss C: -4.7499 | Loss G: 52.9476 | FID: 218.2884 | IS: 2.2424
+ -> New best model saved.
+Epoch [255/300] Loss C: -4.9745 | Loss G: 51.6389
+Epoch [256/300] Loss C: -4.8522 | Loss G: 57.8405 | FID: 220.1255 | IS: 2.2076
+ -> No improvement for 1 eval(s).
+Epoch [257/300] Loss C: -4.8523 | Loss G: 49.1563
+Epoch [258/300] Loss C: -4.8386 | Loss G: 60.4603 | FID: 217.0199 | IS: 2.3134
+ -> New best model saved.
+Epoch [259/300] Loss C: -4.6826 | Loss G: 58.0384
+Epoch [260/300] Loss C: -4.8112 | Loss G: 55.9776 | FID: 216.5169 | IS: 2.3153
+ -> New best model saved.
+Epoch [261/300] Loss C: -4.7561 | Loss G: 58.7685
+Epoch [262/300] Loss C: -4.5947 | Loss G: 60.3833 | FID: 220.5214 | IS: 2.2431
+ -> No improvement for 1 eval(s).
+Epoch [263/300] Loss C: -4.6065 | Loss G: 41.6867
+Epoch [264/300] Loss C: -4.6990 | Loss G: 71.5026 | FID: 217.6611 | IS: 2.3107
+ -> No improvement for 2 eval(s).
+Epoch [265/300] Loss C: -4.6239 | Loss G: 75.2417
+Epoch [266/300] Loss C: -4.6878 | Loss G: 79.7627 | FID: 218.9587 | IS: 2.3267
+ -> No improvement for 3 eval(s).
+Epoch [267/300] Loss C: -4.5702 | Loss G: 72.0693
+Epoch [268/300] Loss C: -4.6042 | Loss G: 56.1171 | FID: 218.9987 | IS: 2.2489
+ -> No improvement for 4 eval(s).
+Epoch [269/300] Loss C: -4.5067 | Loss G: 57.4993
+Epoch [270/300] Loss C: -4.5777 | Loss G: 54.3272 | FID: 216.5214 | IS: 2.3353
+ -> No improvement for 5 eval(s).
+Epoch [271/300] Loss C: -4.6206 | Loss G: 47.4227
+Epoch [272/300] Loss C: -4.5822 | Loss G: 57.4330 | FID: 215.6986 | IS: 2.3219
+ -> New best model saved.
+Epoch [273/300] Loss C: -4.5831 | Loss G: 70.1115
+Epoch [274/300] Loss C: -4.6324 | Loss G: 71.0119 | FID: 218.9583 | IS: 2.2939
+ -> No improvement for 1 eval(s).
+Epoch [275/300] Loss C: -4.4844 | Loss G: 37.9769
+Epoch [276/300] Loss C: -4.6239 | Loss G: 45.8594 | FID: 216.8188 | IS: 2.3786
+ -> No improvement for 2 eval(s).
+Epoch [277/300] Loss C: -4.5295 | Loss G: 34.9392
+Epoch [278/300] Loss C: -4.6645 | Loss G: 23.1684 | FID: 217.1882 | IS: 2.4565
+ -> No improvement for 3 eval(s).
+Epoch [279/300] Loss C: -4.5597 | Loss G: 54.5023
+Epoch [280/300] Loss C: -4.6173 | Loss G: 34.8143 | FID: 217.2310 | IS: 2.2036
+ -> No improvement for 4 eval(s).
+Epoch [281/300] Loss C: -4.4494 | Loss G: 18.7348
+Epoch [282/300] Loss C: -4.3689 | Loss G: 27.4641 | FID: 218.4805 | IS: 2.2958
+ -> No improvement for 5 eval(s).
+Epoch [283/300] Loss C: -4.4502 | Loss G: 5.0474
+Epoch [284/300] Loss C: -4.4514 | Loss G: 17.2486 | FID: 215.1553 | IS: 2.3308
+ -> New best model saved.
+Epoch [285/300] Loss C: -4.4931 | Loss G: 20.9140
+Epoch [286/300] Loss C: -4.3939 | Loss G: 2.7295 | FID: 215.5566 | IS: 2.3507
+ -> No improvement for 1 eval(s).
+Epoch [287/300] Loss C: -4.4360 | Loss G: 14.0310
+Epoch [288/300] Loss C: -4.5068 | Loss G: 4.6525 | FID: 217.0883 | IS: 2.4350
+ -> No improvement for 2 eval(s).
+Epoch [289/300] Loss C: -4.4118 | Loss G: 20.3912
+Epoch [290/300] Loss C: -4.4288 | Loss G: 21.4672 | FID: 213.8502 | IS: 2.3578
+ -> New best model saved.
+Epoch [291/300] Loss C: -4.5020 | Loss G: 21.4842
+Epoch [292/300] Loss C: -4.2770 | Loss G: 10.0336 | FID: 215.4714 | IS: 2.4621
+ -> No improvement for 1 eval(s).
+Epoch [293/300] Loss C: -4.2894 | Loss G: 3.5187
+Epoch [294/300] Loss C: -4.3861 | Loss G: 37.1455 | FID: 214.4508 | IS: 2.3801
+ -> No improvement for 2 eval(s).
+Epoch [295/300] Loss C: -4.3612 | Loss G: 39.0103
+Epoch [296/300] Loss C: -4.3971 | Loss G: 29.0934 | FID: 211.9264 | IS: 2.4589
+ -> New best model saved.
+Epoch [297/300] Loss C: -4.3019 | Loss G: 24.0851
+Epoch [298/300] Loss C: -4.3022 | Loss G: 7.2869 | FID: 211.4208 | IS: 2.3920
+ -> New best model saved.
+Epoch [299/300] Loss C: -4.2865 | Loss G: -19.3570
+Epoch [300/300] Loss C: -4.4167 | Loss G: -12.5032 | FID: 211.5940 | IS: 2.4536
+ -> No improvement for 1 eval(s).
+Appended generative metrics to results_gen/generative_experiments.csv

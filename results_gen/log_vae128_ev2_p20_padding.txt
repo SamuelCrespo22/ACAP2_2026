@@ -1,0 +1,193 @@
+Using device: cuda
+Experiment: VAE128 ev2 p20 padding
+Epoch [1/300] Train Loss: 0.6763 | Val Loss: 0.6613
+Epoch [2/300] Train Loss: 0.6510 | Val Loss: 0.6411 | FID: 335.9369 | IS: 1.3551 | SSIM: 0.1827
+ -> New best model saved.
+Epoch [3/300] Train Loss: 0.6394 | Val Loss: 0.6332
+Epoch [4/300] Train Loss: 0.6275 | Val Loss: 0.6175 | FID: 315.7680 | IS: 1.6305 | SSIM: 0.1992
+ -> New best model saved.
+Epoch [5/300] Train Loss: 0.6136 | Val Loss: 0.6071
+Epoch [6/300] Train Loss: 0.6060 | Val Loss: 0.6011 | FID: 307.6135 | IS: 1.4520 | SSIM: 0.2335
+ -> New best model saved.
+Epoch [7/300] Train Loss: 0.6016 | Val Loss: 0.5982
+Epoch [8/300] Train Loss: 0.5991 | Val Loss: 0.5956 | FID: 300.2876 | IS: 1.5400 | SSIM: 0.2568
+ -> New best model saved.
+Epoch [9/300] Train Loss: 0.5966 | Val Loss: 0.5949
+Epoch [10/300] Train Loss: 0.5938 | Val Loss: 0.5905 | FID: 296.4308 | IS: 1.3963 | SSIM: 0.2728
+ -> New best model saved.
+Epoch [11/300] Train Loss: 0.5914 | Val Loss: 0.5892
+Epoch [12/300] Train Loss: 0.5904 | Val Loss: 0.5876 | FID: 294.3177 | IS: 1.4263 | SSIM: 0.2836
+ -> New best model saved.
+Epoch [13/300] Train Loss: 0.5886 | Val Loss: 0.5865
+Epoch [14/300] Train Loss: 0.5870 | Val Loss: 0.5863 | FID: 286.9631 | IS: 1.4145 | SSIM: 0.2971
+ -> New best model saved.
+Epoch [15/300] Train Loss: 0.5863 | Val Loss: 0.5840
+Epoch [16/300] Train Loss: 0.5854 | Val Loss: 0.5832 | FID: 288.3317 | IS: 1.4461 | SSIM: 0.3086
+ -> No improvement for 1 eval(s).
+Epoch [17/300] Train Loss: 0.5834 | Val Loss: 0.5821
+Epoch [18/300] Train Loss: 0.5831 | Val Loss: 0.5813 | FID: 285.8269 | IS: 1.4798 | SSIM: 0.3183
+ -> New best model saved.
+Epoch [19/300] Train Loss: 0.5823 | Val Loss: 0.5806
+Epoch [20/300] Train Loss: 0.5810 | Val Loss: 0.5799 | FID: 278.7157 | IS: 1.5165 | SSIM: 0.3238
+ -> New best model saved.
+Epoch [21/300] Train Loss: 0.5811 | Val Loss: 0.5798
+Epoch [22/300] Train Loss: 0.5807 | Val Loss: 0.5793 | FID: 275.2115 | IS: 1.6277 | SSIM: 0.3286
+ -> New best model saved.
+Epoch [23/300] Train Loss: 0.5798 | Val Loss: 0.5785
+Epoch [24/300] Train Loss: 0.5794 | Val Loss: 0.5796 | FID: 270.7088 | IS: 1.6036 | SSIM: 0.3307
+ -> New best model saved.
+Epoch [25/300] Train Loss: 0.5792 | Val Loss: 0.5784
+Epoch [26/300] Train Loss: 0.5787 | Val Loss: 0.5774 | FID: 265.9163 | IS: 1.6712 | SSIM: 0.3392
+ -> New best model saved.
+Epoch [27/300] Train Loss: 0.5785 | Val Loss: 0.5771
+Epoch [28/300] Train Loss: 0.5775 | Val Loss: 0.5764 | FID: 261.6867 | IS: 1.7204 | SSIM: 0.3458
+ -> New best model saved.
+Epoch [29/300] Train Loss: 0.5773 | Val Loss: 0.5763
+Epoch [30/300] Train Loss: 0.5765 | Val Loss: 0.5760 | FID: 259.1326 | IS: 1.8794 | SSIM: 0.3476
+ -> New best model saved.
+Epoch [31/300] Train Loss: 0.5763 | Val Loss: 0.5756
+Epoch [32/300] Train Loss: 0.5762 | Val Loss: 0.5752 | FID: 252.3149 | IS: 1.8428 | SSIM: 0.3526
+ -> New best model saved.
+Epoch [33/300] Train Loss: 0.5756 | Val Loss: 0.5755
+Epoch [34/300] Train Loss: 0.5753 | Val Loss: 0.5750 | FID: 249.1205 | IS: 1.8585 | SSIM: 0.3596
+ -> New best model saved.
+Epoch [35/300] Train Loss: 0.5753 | Val Loss: 0.5760
+Epoch [36/300] Train Loss: 0.5751 | Val Loss: 0.5746 | FID: 247.9874 | IS: 1.9612 | SSIM: 0.3615
+ -> New best model saved.
+Epoch [37/300] Train Loss: 0.5747 | Val Loss: 0.5742
+Epoch [38/300] Train Loss: 0.5744 | Val Loss: 0.5741 | FID: 244.9333 | IS: 1.9307 | SSIM: 0.3647
+ -> New best model saved.
+Epoch [39/300] Train Loss: 0.5748 | Val Loss: 0.5741
+Epoch [40/300] Train Loss: 0.5742 | Val Loss: 0.5746 | FID: 239.9928 | IS: 2.0588 | SSIM: 0.3606
+ -> New best model saved.
+Epoch [41/300] Train Loss: 0.5737 | Val Loss: 0.5736
+Epoch [42/300] Train Loss: 0.5730 | Val Loss: 0.5736 | FID: 239.5628 | IS: 2.0139 | SSIM: 0.3680
+ -> New best model saved.
+Epoch [43/300] Train Loss: 0.5730 | Val Loss: 0.5733
+Epoch [44/300] Train Loss: 0.5731 | Val Loss: 0.5739 | FID: 239.7069 | IS: 2.0841 | SSIM: 0.3739
+ -> No improvement for 1 eval(s).
+Epoch [45/300] Train Loss: 0.5730 | Val Loss: 0.5733
+Epoch [46/300] Train Loss: 0.5730 | Val Loss: 0.5728 | FID: 237.5412 | IS: 2.0869 | SSIM: 0.3728
+ -> New best model saved.
+Epoch [47/300] Train Loss: 0.5721 | Val Loss: 0.5727
+Epoch [48/300] Train Loss: 0.5723 | Val Loss: 0.5728 | FID: 238.0587 | IS: 2.0871 | SSIM: 0.3774
+ -> No improvement for 1 eval(s).
+Epoch [49/300] Train Loss: 0.5722 | Val Loss: 0.5725
+Epoch [50/300] Train Loss: 0.5729 | Val Loss: 0.5737 | FID: 236.0955 | IS: 2.1560 | SSIM: 0.3744
+ -> New best model saved.
+Epoch [51/300] Train Loss: 0.5719 | Val Loss: 0.5726
+Epoch [52/300] Train Loss: 0.5715 | Val Loss: 0.5721 | FID: 234.5098 | IS: 2.2778 | SSIM: 0.3821
+ -> New best model saved.
+Epoch [53/300] Train Loss: 0.5711 | Val Loss: 0.5721
+Epoch [54/300] Train Loss: 0.5715 | Val Loss: 0.5717 | FID: 233.9701 | IS: 2.1445 | SSIM: 0.3849
+ -> New best model saved.
+Epoch [55/300] Train Loss: 0.5712 | Val Loss: 0.5733
+Epoch [56/300] Train Loss: 0.5714 | Val Loss: 0.5719 | FID: 233.5272 | IS: 2.1555 | SSIM: 0.3862
+ -> New best model saved.
+Epoch [57/300] Train Loss: 0.5711 | Val Loss: 0.5728
+Epoch [58/300] Train Loss: 0.5708 | Val Loss: 0.5715 | FID: 234.0828 | IS: 2.1920 | SSIM: 0.3885
+ -> No improvement for 1 eval(s).
+Epoch [59/300] Train Loss: 0.5708 | Val Loss: 0.5720
+Epoch [60/300] Train Loss: 0.5707 | Val Loss: 0.5713 | FID: 230.9652 | IS: 2.1540 | SSIM: 0.3874
+ -> New best model saved.
+Epoch [61/300] Train Loss: 0.5706 | Val Loss: 0.5713
+Epoch [62/300] Train Loss: 0.5703 | Val Loss: 0.5716 | FID: 232.0563 | IS: 2.2583 | SSIM: 0.3932
+ -> No improvement for 1 eval(s).
+Epoch [63/300] Train Loss: 0.5703 | Val Loss: 0.5717
+Epoch [64/300] Train Loss: 0.5702 | Val Loss: 0.5711 | FID: 231.5685 | IS: 2.3564 | SSIM: 0.3915
+ -> No improvement for 2 eval(s).
+Epoch [65/300] Train Loss: 0.5702 | Val Loss: 0.5711
+Epoch [66/300] Train Loss: 0.5697 | Val Loss: 0.5713 | FID: 230.5265 | IS: 2.3253 | SSIM: 0.3950
+ -> New best model saved.
+Epoch [67/300] Train Loss: 0.5700 | Val Loss: 0.5709
+Epoch [68/300] Train Loss: 0.5702 | Val Loss: 0.5709 | FID: 231.0078 | IS: 2.2859 | SSIM: 0.3922
+ -> No improvement for 1 eval(s).
+Epoch [69/300] Train Loss: 0.5695 | Val Loss: 0.5706
+Epoch [70/300] Train Loss: 0.5692 | Val Loss: 0.5707 | FID: 233.3483 | IS: 2.3767 | SSIM: 0.3988
+ -> No improvement for 2 eval(s).
+Epoch [71/300] Train Loss: 0.5694 | Val Loss: 0.5706
+Epoch [72/300] Train Loss: 0.5691 | Val Loss: 0.5707 | FID: 231.5085 | IS: 2.2411 | SSIM: 0.4007
+ -> No improvement for 3 eval(s).
+Epoch [73/300] Train Loss: 0.5695 | Val Loss: 0.5706
+Epoch [74/300] Train Loss: 0.5692 | Val Loss: 0.5706 | FID: 231.0739 | IS: 2.2895 | SSIM: 0.3990
+ -> No improvement for 4 eval(s).
+Epoch [75/300] Train Loss: 0.5695 | Val Loss: 0.5711
+Epoch [76/300] Train Loss: 0.5692 | Val Loss: 0.5709 | FID: 232.7991 | IS: 2.3522 | SSIM: 0.4007
+ -> No improvement for 5 eval(s).
+Epoch [77/300] Train Loss: 0.5696 | Val Loss: 0.5706
+Epoch [78/300] Train Loss: 0.5693 | Val Loss: 0.5705 | FID: 232.7536 | IS: 2.3938 | SSIM: 0.3988
+ -> No improvement for 6 eval(s).
+Epoch [79/300] Train Loss: 0.5688 | Val Loss: 0.5708
+Epoch [80/300] Train Loss: 0.5690 | Val Loss: 0.5703 | FID: 231.3396 | IS: 2.4417 | SSIM: 0.4023
+ -> No improvement for 7 eval(s).
+Epoch [81/300] Train Loss: 0.5690 | Val Loss: 0.5709
+Epoch [82/300] Train Loss: 0.5688 | Val Loss: 0.5706 | FID: 233.3538 | IS: 2.2405 | SSIM: 0.4045
+ -> No improvement for 8 eval(s).
+Epoch [83/300] Train Loss: 0.5689 | Val Loss: 0.5702
+Epoch [84/300] Train Loss: 0.5689 | Val Loss: 0.5702 | FID: 233.7787 | IS: 2.5316 | SSIM: 0.4042
+ -> No improvement for 9 eval(s).
+Epoch [85/300] Train Loss: 0.5687 | Val Loss: 0.5702
+Epoch [86/300] Train Loss: 0.5685 | Val Loss: 0.5702 | FID: 229.5935 | IS: 2.3197 | SSIM: 0.4076
+ -> New best model saved.
+Epoch [87/300] Train Loss: 0.5685 | Val Loss: 0.5701
+Epoch [88/300] Train Loss: 0.5686 | Val Loss: 0.5705 | FID: 230.6057 | IS: 2.3625 | SSIM: 0.4030
+ -> No improvement for 1 eval(s).
+Epoch [89/300] Train Loss: 0.5683 | Val Loss: 0.5701
+Epoch [90/300] Train Loss: 0.5681 | Val Loss: 0.5701 | FID: 234.1794 | IS: 2.3093 | SSIM: 0.4046
+ -> No improvement for 2 eval(s).
+Epoch [91/300] Train Loss: 0.5684 | Val Loss: 0.5701
+Epoch [92/300] Train Loss: 0.5682 | Val Loss: 0.5699 | FID: 230.1546 | IS: 2.4568 | SSIM: 0.4068
+ -> No improvement for 3 eval(s).
+Epoch [93/300] Train Loss: 0.5683 | Val Loss: 0.5703
+Epoch [94/300] Train Loss: 0.5683 | Val Loss: 0.5699 | FID: 234.9868 | IS: 2.3981 | SSIM: 0.4082
+ -> No improvement for 4 eval(s).
+Epoch [95/300] Train Loss: 0.5678 | Val Loss: 0.5701
+Epoch [96/300] Train Loss: 0.5680 | Val Loss: 0.5703 | FID: 232.9671 | IS: 2.4207 | SSIM: 0.4088
+ -> No improvement for 5 eval(s).
+Epoch [97/300] Train Loss: 0.5677 | Val Loss: 0.5700
+Epoch [98/300] Train Loss: 0.5681 | Val Loss: 0.5700 | FID: 232.2206 | IS: 2.4622 | SSIM: 0.4092
+ -> No improvement for 6 eval(s).
+Epoch [99/300] Train Loss: 0.5673 | Val Loss: 0.5698
+Epoch [100/300] Train Loss: 0.5678 | Val Loss: 0.5696 | FID: 234.9315 | IS: 2.4290 | SSIM: 0.4079
+ -> No improvement for 7 eval(s).
+Epoch [101/300] Train Loss: 0.5677 | Val Loss: 0.5698
+Epoch [102/300] Train Loss: 0.5675 | Val Loss: 0.5697 | FID: 234.2219 | IS: 2.3200 | SSIM: 0.4087
+ -> No improvement for 8 eval(s).
+Epoch [103/300] Train Loss: 0.5677 | Val Loss: 0.5698
+Epoch [104/300] Train Loss: 0.5678 | Val Loss: 0.5699 | FID: 235.1900 | IS: 2.4606 | SSIM: 0.4103
+ -> No improvement for 9 eval(s).
+Epoch [105/300] Train Loss: 0.5679 | Val Loss: 0.5696
+Epoch [106/300] Train Loss: 0.5674 | Val Loss: 0.5696 | FID: 233.5141 | IS: 2.3441 | SSIM: 0.4124
+ -> No improvement for 10 eval(s).
+Epoch [107/300] Train Loss: 0.5678 | Val Loss: 0.5701
+Epoch [108/300] Train Loss: 0.5677 | Val Loss: 0.5698 | FID: 233.6043 | IS: 2.3625 | SSIM: 0.4143
+ -> No improvement for 11 eval(s).
+Epoch [109/300] Train Loss: 0.5673 | Val Loss: 0.5695
+Epoch [110/300] Train Loss: 0.5675 | Val Loss: 0.5695 | FID: 234.0200 | IS: 2.3238 | SSIM: 0.4114
+ -> No improvement for 12 eval(s).
+Epoch [111/300] Train Loss: 0.5671 | Val Loss: 0.5698
+Epoch [112/300] Train Loss: 0.5669 | Val Loss: 0.5698 | FID: 234.7166 | IS: 2.4585 | SSIM: 0.4125
+ -> No improvement for 13 eval(s).
+Epoch [113/300] Train Loss: 0.5670 | Val Loss: 0.5696
+Epoch [114/300] Train Loss: 0.5669 | Val Loss: 0.5695 | FID: 230.6171 | IS: 2.2628 | SSIM: 0.4124
+ -> No improvement for 14 eval(s).
+Epoch [115/300] Train Loss: 0.5671 | Val Loss: 0.5708
+Epoch [116/300] Train Loss: 0.5673 | Val Loss: 0.5698 | FID: 233.2254 | IS: 2.2570 | SSIM: 0.4120
+ -> No improvement for 15 eval(s).
+Epoch [117/300] Train Loss: 0.5671 | Val Loss: 0.5696
+Epoch [118/300] Train Loss: 0.5668 | Val Loss: 0.5694 | FID: 231.1164 | IS: 2.3183 | SSIM: 0.4128
+ -> No improvement for 16 eval(s).
+Epoch [119/300] Train Loss: 0.5673 | Val Loss: 0.5694
+Epoch [120/300] Train Loss: 0.5669 | Val Loss: 0.5696 | FID: 230.5898 | IS: 2.3710 | SSIM: 0.4144
+ -> No improvement for 17 eval(s).
+Epoch [121/300] Train Loss: 0.5671 | Val Loss: 0.5695
+Epoch [122/300] Train Loss: 0.5669 | Val Loss: 0.5695 | FID: 231.7133 | IS: 2.3733 | SSIM: 0.4137
+ -> No improvement for 18 eval(s).
+Epoch [123/300] Train Loss: 0.5673 | Val Loss: 0.5696
+Epoch [124/300] Train Loss: 0.5665 | Val Loss: 0.5705 | FID: 231.6471 | IS: 2.4138 | SSIM: 0.4202
+ -> No improvement for 19 eval(s).
+Epoch [125/300] Train Loss: 0.5667 | Val Loss: 0.5703
+Epoch [126/300] Train Loss: 0.5674 | Val Loss: 0.5700 | FID: 233.6265 | IS: 2.3734 | SSIM: 0.4171
+ -> No improvement for 20 eval(s).
+Early stopping triggered! Model stopped improving for 40 epochs.
+Appended generative metrics to results_gen/generative_experiments.csv

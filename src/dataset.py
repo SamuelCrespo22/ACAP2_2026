@@ -6,6 +6,7 @@ import torch.utils.data as data
 import torchvision.transforms as transforms
 from sklearn.model_selection import train_test_split
 
+
 class ButterflyDataset(data.Dataset):
     def __init__(self, df, img_dir, transform=None, classes=None):
         self.img_labels = df.reset_index(drop=True)
@@ -13,7 +14,7 @@ class ButterflyDataset(data.Dataset):
         self.transform = transform
 
         if classes is None:
-            self.classes = sorted(self.img_labels['label'].unique())
+            self.classes = sorted(self.img_labels["label"].unique())
         else:
             self.classes = classes
 
@@ -23,12 +24,13 @@ class ButterflyDataset(data.Dataset):
         return len(self.img_labels)
 
     def __getitem__(self, idx):
-        img_name = self.img_labels.iloc[idx]['filename']
+        img_name = self.img_labels.iloc[idx]["filename"]
         img_path = os.path.join(self.img_dir, img_name)
 
         image = Image.open(img_path).convert("RGB")
 
-        label_name = self.img_labels.iloc[idx]['label']
+        label_name = self.img_labels.iloc[idx]["label"]
+
         if label_name not in self.class_to_idx:
             raise ValueError(
                 f"Label '{label_name}' not found in classes mapping. "
@@ -55,62 +57,81 @@ def get_dataloaders(
     normalize=True,
     num_workers=2,
 ):
-    """
-    Loads and prepares dataloaders for training, validation, and optionally testing.
-    
-    Args:
-        csv_path (str): Path to the CSV file.
-        img_dir (str): Path to the images directory.
-        batch_size (int): Number of images per batch.
-        img_size (int): Size to resize the images to.
-        val_size (float): Proportion of data for validation.
-        test_size (float): Proportion of data for an internal test set.
-        augment (bool): Whether to apply data augmentation on training images.
-        normalize (bool): Whether to normalize images with mean/std.
-        num_workers (int): Number of CPU subprocesses to use for data loading.
-                          
-    Returns:
-        train_loader, val_loader, test_loader, classes
-    """
-    assert val_size + test_size < 1.0, "val_size and test_size combined must be less than 1.0 (need data for training)."
+    assert val_size + test_size < 1.0, (
+        "val_size and test_size combined must be less than 1.0."
+    )
 
     df = pd.read_csv(csv_path)
-    classes = sorted(df['label'].unique())
-    
+    classes = sorted(df["label"].unique())
+
     pin_memory = torch.cuda.is_available()
 
     mean = (0.5, 0.5, 0.5)
     std = (0.5, 0.5, 0.5)
 
-    train_transforms = [transforms.Resize((img_size, img_size))]
+    train_transforms = [
+        transforms.Resize((img_size, img_size))
+    ]
+
     if augment:
         train_transforms += [
             transforms.RandomHorizontalFlip(p=0.5),
-            transforms.RandomRotation(degrees=10, expand=False, fill=None, padding_mode='reflect'),
+
+            # Reflect padding before rotation avoids black corners.
+            transforms.Pad(
+                padding=8,
+                padding_mode="reflect"
+            ),
+
+            transforms.RandomRotation(
+                degrees=10,
+                expand=False,
+                fill=0
+            ),
+
+            transforms.CenterCrop(img_size),
         ]
-    train_transforms += [transforms.ToTensor()]
+
+    train_transforms += [
+        transforms.ToTensor()
+    ]
+
     if normalize:
-        train_transforms += [transforms.Normalize(mean=mean, std=std)]
+        train_transforms += [
+            transforms.Normalize(mean=mean, std=std)
+        ]
+
     train_transforms = transforms.Compose(train_transforms)
 
-    eval_transforms = [transforms.Resize((img_size, img_size)), transforms.ToTensor()]
+    eval_transforms = [
+        transforms.Resize((img_size, img_size)),
+        transforms.ToTensor()
+    ]
+
     if normalize:
-        eval_transforms += [transforms.Normalize(mean=mean, std=std)]
+        eval_transforms += [
+            transforms.Normalize(mean=mean, std=std)
+        ]
+
     eval_transforms = transforms.Compose(eval_transforms)
 
-    train_loader, val_loader, test_loader = None, None, None
+    test_loader = None
 
-    # First split: Separate Test set (if requested)
     if test_size > 0:
         train_val_df, test_df = train_test_split(
-            df, test_size=test_size, random_state=42, stratify=df['label']
+            df,
+            test_size=test_size,
+            random_state=42,
+            stratify=df["label"]
         )
+
         test_dataset = ButterflyDataset(
             df=test_df,
             img_dir=img_dir,
             transform=eval_transforms,
             classes=classes,
         )
+
         test_loader = data.DataLoader(
             test_dataset,
             batch_size=batch_size,
@@ -121,21 +142,23 @@ def get_dataloaders(
     else:
         train_val_df = df
 
-    # Second split: Separate Validation set (if requested)
     if val_size > 0:
         relative_val_size = val_size / (1.0 - test_size)
+
         train_df, val_df = train_test_split(
             train_val_df,
             test_size=relative_val_size,
             random_state=42,
-            stratify=train_val_df['label'],
+            stratify=train_val_df["label"],
         )
+
         val_dataset = ButterflyDataset(
             df=val_df,
             img_dir=img_dir,
             transform=eval_transforms,
             classes=classes,
         )
+
         val_loader = data.DataLoader(
             val_dataset,
             batch_size=batch_size,
@@ -145,8 +168,8 @@ def get_dataloaders(
         )
     else:
         train_df = train_val_df
+        val_loader = None
 
-    # Final Training Dataset
     train_dataset = ButterflyDataset(
         df=train_df,
         img_dir=img_dir,
