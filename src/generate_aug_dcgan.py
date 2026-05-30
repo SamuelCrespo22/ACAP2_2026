@@ -23,6 +23,7 @@ def generate_augmented_dcgan():
         normalize=False
     )
     train_df = train_loader.dataset.img_labels
+    full_df = pd.read_csv("data/train.csv")
     
     print("Copying original images...")
     for _, row in train_df.iterrows():
@@ -30,7 +31,7 @@ def generate_augmented_dcgan():
 
     # Load Model
     netG = Generator(inputDim=z_dim, num_classes=len(classes)).to(device)
-    netG.load_state_dict(torch.load("results_gen/best_dcgan_g.pth", map_location=device))
+    netG.load_state_dict(torch.load("results_gen/dcgan2e4_ev2_p20_padding/best_dcgan_g.pth", map_location=device))
     netG.eval()
 
     new_rows = []
@@ -38,7 +39,7 @@ def generate_augmented_dcgan():
     # Generate Images
     with torch.no_grad():
         for class_idx, class_name in enumerate(classes):
-            class_count = len(train_df[train_df['label'] == class_name])
+            class_count = len(full_df[full_df['label'] == class_name])
             
             if 51 <= class_count <= 60:
                 to_generate = int(round(class_count * 0.20))
