@@ -35,7 +35,7 @@ def generate_augmented_diffusion():
     ddpm = DDPM(model=model, T=1000, device=device)
 
     new_rows = []
-    batch_size_gen = 32 # Adjust this if "Out of Memory" occurs (Lower to 16 or 8)
+    batch_size_gen = 32 # Lower to 16 or 8 if GPU memory is an issue
     
     # Generate Images
     for class_idx, class_name in enumerate(classes):
@@ -47,7 +47,6 @@ def generate_augmented_diffusion():
             n_samples = min(batch_size_gen, to_generate - generated_count)
             labels = torch.full((n_samples,), class_idx, dtype=torch.long, device=device)
 
-            # --- Generate images (Iterative process) ---
             with torch.no_grad():
                 samples = ddpm.sample(n=n_samples, labels=labels) 
 
