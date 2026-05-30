@@ -6,6 +6,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from sklearn.metrics import f1_score
 
 from dataset import get_dataloaders
 from utils import (
@@ -52,6 +53,9 @@ def validate(model, val_loader, criterion, device):
     running_loss = 0.0
     correct = 0
     total = 0
+    
+    all_preds = []
+    all_labels = []
 
     with torch.no_grad():
         for images, labels in val_loader:
@@ -66,23 +70,30 @@ def validate(model, val_loader, criterion, device):
             preds = torch.argmax(outputs, dim=1)
             correct += (preds == labels).sum().item()
             total += labels.size(0)
+            
+            all_preds.extend(preds.cpu().numpy())
+            all_labels.extend(labels.cpu().numpy())
 
-    return running_loss / total, correct / total
+    val_loss = running_loss / total
+    val_acc = correct / total
+    
+    val_f1 = f1_score(all_labels, all_preds, average='macro', zero_division=0)
+
+    return val_loss, val_acc, val_f1
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Train baseline CNN.")
+    parser = argparse.ArgumentParser(description="Train Baseline CNN (Fixed Data, Multiple Weight Seeds).")
 
     parser.add_argument("--csv_path", default="data/train.csv")
     parser.add_argument("--img_dir", default="data/train")
-    parser.add_argument("--aug_csv_path", default=None, help="Path to the generated images CSV")
-    parser.add_argument("--aug_img_dir", default=None, help="Path to the generated images directory")
+    parser.add_argument("--aug_csv_path", default=None, help="Path to generated images CSV")
+    parser.add_argument("--aug_img_dir", default=None, help="Path to generated images directory")
     parser.add_argument("--batch_size", type=int, default=32)
     parser.add_argument("--img_size", type=int, default=64)
     parser.add_argument("--epochs", type=int, default=100)
     parser.add_argument("--learning_rate", type=float, default=0.001)
 
-    # Required split: 70 / 15 / 15
     parser.add_argument("--val_size", type=float, default=0.15)
     parser.add_argument("--test_size", type=float, default=0.15)
 
@@ -112,34 +123,31 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
-    print("Preparing datasets and dataloaders...")
-    train_loader, val_loader, test_loader, classes = get_dataloaders(
-        csv_path=args.csv_path,
-        img_dir=args.img_dir,
-        batch_size=args.batch_size,
-        img_size=args.img_size,
-        val_size=args.val_size,
-        test_size=args.test_size,
-        augment=False,
-        normalize=True,
-        aug_csv_path=args.aug_csv_path,
-        aug_img_dir=args.aug_img_dir,
-    )
-
-    num_classes = len(classes)
-    print(f"Number of classes: {num_classes}")
-
+    # As 5 seeds focadas APENAS na rede neural e batch shuffling
     seeds = [42, 43, 44, 45, 46]
 
     for seed in seeds:
-        print(f"\n{'='*50}\nStarting training with Seed: {seed}\n{'='*50}")
+        print(f"\n{'='*50}\nStarting Training - CNN Initialization Seed: {seed}\n{'='*50}")
         set_seed(seed)
 
-        current_experiment_name = f"{args.experiment_name}_seed_{seed}"
-        current_save_dir = os.path.join(args.save_dir, f"seed_{seed}")
-        os.makedirs(current_save_dir, exist_ok=True)
+        train_loader, val_loader, test_loader, classes = get_dataloaders(
+            csv_path=args.csv_path,
+            img_dir=args.img_dir,
+            batch_size=args.batch_size,
+            img_size=args.img_size,
+            val_size=args.val_size,
+            test_size=args.test_size,
+            augment=False,
+            normalize=True,
+            aug_csv_path=args.aug_csv_path,
+            aug_img_dir=args.aug_img_dir,
+        )
 
-        print(f"Experiment: {current_experiment_name}")
+        num_classes = len(classes)
+        
+        current_experiment_name = f"{args.experiment_name}_FixedData_NetSeed_{seed}"
+        current_save_dir = os.path.join(args.save_dir, f"NetSeed_{seed}")
+        os.makedirs(current_save_dir, exist_ok=True)
 
         model = BaselineCNN(num_classes=num_classes).to(device)
         optimizer = optim.Adam(model.parameters(), lr=args.learning_rate)
@@ -150,8 +158,7 @@ def main():
         train_accs = []
         val_accs = []
 
-        best_val_loss = float("inf")
-        best_val_acc = 0.0
+        best_val_f1 = 0.0
         best_model_path = os.path.join(current_save_dir, "baseline_best.pth")
 
         patience = 15
@@ -166,7 +173,7 @@ def main():
                 device=device,
             )
 
-            val_loss, val_acc = validate(
+            val_loss, val_acc, val_f1 = validate(
                 model=model,
                 val_loader=val_loader,
                 criterion=criterion,
@@ -181,14 +188,13 @@ def main():
             print(
                 f"Epoch [{epoch + 1}/{args.epochs}] "
                 f"Train Loss: {train_loss:.4f} | "
-                f"Train Acc: {train_acc:.4f} | "
                 f"Val Loss: {val_loss:.4f} | "
-                f"Val Acc: {val_acc:.4f}"
+                f"Val Acc: {val_acc:.4f} | "
+                f"Val F1: {val_f1:.4f}"
             )
 
-            if val_loss < best_val_loss:
-                best_val_loss = val_loss
-                best_val_acc = val_acc
+            if val_f1 > best_val_f1:
+                best_val_f1 = val_f1
                 epochs_no_improve = 0
 
                 torch.save(
@@ -198,23 +204,20 @@ def main():
                         "optimizer_state_dict": optimizer.state_dict(),
                         "val_loss": val_loss,
                         "val_acc": val_acc,
+                        "val_f1": val_f1,
                         "classes": classes,
                         "experiment_name": current_experiment_name,
                     },
                     best_model_path,
                 )
-
-                print(" -> New best model saved.")
-
+                print(f" -> New best model saved (F1: {val_f1:.4f}).")
             else:
                 epochs_no_improve += 1
-                print(f" -> No improvement for {epochs_no_improve} epoch(s).")
-
                 if epochs_no_improve >= patience:
                     print(f"\nEarly stopping triggered at epoch {epoch + 1}")
                     break
 
-        print(f"\nTraining finished for seed {seed}.")
+        print(f"\nTraining finished for Network Seed {seed}.")
 
         plot_training_curves(
             train_losses=train_losses,
@@ -234,15 +237,12 @@ def main():
             class_names=classes,
         )
 
-        print("\nValidation report:\n")
-        print(val_report)
-
         append_metrics_to_csv(
             metrics=val_metrics,
             epochs=len(train_losses),
             experiment_name=current_experiment_name,
-            best_val_acc=best_val_acc,
-            save_path="results/all_experiments.csv",
+            best_val_acc=checkpoint.get('val_acc', 0.0),
+            save_path="results/all_experiments_val.csv",
         )
 
         save_confusion_matrix(
@@ -251,35 +251,6 @@ def main():
             class_names=classes,
             save_path=os.path.join(current_save_dir, "confusion_matrix_validation.png"),
         )
-
-        if test_loader is not None:
-            test_metrics, test_report, y_true_test, y_pred_test = evaluate_model(
-                model=model,
-                dataloader=test_loader,
-                device=device,
-                class_names=classes,
-            )
-
-            print("\nTest report:\n")
-            print(test_report)
-
-            append_metrics_to_csv(
-                metrics=test_metrics,
-                epochs=len(train_losses),
-                experiment_name=f"Test_{current_experiment_name}",
-                best_val_acc=best_val_acc,
-                save_path="results/all_experiments.csv",
-            )
-
-            save_confusion_matrix(
-                y_true=y_true_test,
-                y_pred=y_pred_test,
-                class_names=classes,
-                save_path=os.path.join(current_save_dir, "confusion_matrix_test.png"),
-            )
-
-        print(f"\nBaseline evaluation completed for seed {seed}.")
-
 
 if __name__ == "__main__":
     main()
