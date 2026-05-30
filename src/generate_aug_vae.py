@@ -22,14 +22,15 @@ def generate_augmented_vae():
         normalize=False
     )
     train_df = train_loader.dataset.img_labels
+    full_df = pd.read_csv("data/train.csv")
     
     print("Copying original images...")
     for _, row in train_df.iterrows():
         shutil.copy2(os.path.join("data/train", row['filename']), os.path.join(output_dir, row['filename']))
 
     # Load Model
-    model = ConvVAE(latent_dim=128, num_classes=len(classes)).to(device)
-    model.load_state_dict(torch.load("results_gen/best_vae.pth", map_location=device))
+    model = ConvVAE(latent_dim=256, num_classes=len(classes)).to(device)
+    model.load_state_dict(torch.load("results_gen/vae256_ev2_p20_padding/best_vae.pth", map_location=device))
     model.eval()
 
     new_rows = []
@@ -37,7 +38,7 @@ def generate_augmented_vae():
     # Generate Images
     with torch.no_grad():
         for class_idx, class_name in enumerate(classes):
-            class_count = len(train_df[train_df['label'] == class_name])
+            class_count = len(full_df[full_df['label'] == class_name])
             
             if 51 <= class_count <= 60:
                 to_generate = int(round(class_count * 0.20))
@@ -54,7 +55,7 @@ def generate_augmented_vae():
                 continue
 
             print(f"VAE generating {to_generate} images for class: {class_name} (Current count: {class_count})...")
-            z = torch.randn(to_generate, 128).to(device) # VAE needs (N, latent_dim)
+            z = torch.randn(to_generate, 256).to(device) # VAE needs (N, latent_dim)
             labels = torch.full((to_generate,), class_idx, dtype=torch.long, device=device)
 
             samples = model.decode(z, labels) # [0, 1]
