@@ -166,9 +166,8 @@ cython_debug/
 .DS_Store
 
 # Data and Models
-data/
+
 *.pt
 *.h5
 *.hdf5
-augmented_data/
 submissions/
