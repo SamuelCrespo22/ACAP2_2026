@@ -31,7 +31,7 @@ def generate_augmented_wgangp():
 
     # Load Model
     netG = Generator(inputDim=z_dim, num_classes=len(classes)).to(device)
-    netG.load_state_dict(torch.load("results_gen/best_wgangp_g.pth", map_location=device))
+    netG.load_state_dict(torch.load("results_gen/wgan_n5_500ep_padding_final/best_wgangp_g.pth", map_location=device))
     netG.eval()
 
     new_rows = []
