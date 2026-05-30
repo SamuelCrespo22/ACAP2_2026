@@ -9,7 +9,6 @@ from models.wgan_gp import Generator
 def generate_augmented_wgangp():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-    generate_per_class = 50
     z_dim = 100
     output_dir = "data/train_aug_wgangp"
     output_csv = "data/train_aug_wgangp.csv"
@@ -39,8 +38,23 @@ def generate_augmented_wgangp():
     # Generate Images
     with torch.no_grad():
         for class_idx, class_name in enumerate(classes):
-            to_generate = generate_per_class
-            print(f"WGAN-GP generating {to_generate} images for class: {class_name}...")
+            class_count = len(train_df[train_df['label'] == class_name])
+            
+            if 51 <= class_count <= 60:
+                to_generate = int(round(class_count * 0.20))
+            elif 61 <= class_count <= 70:
+                to_generate = int(round(class_count * 0.15))
+            elif 71 <= class_count <= 80:
+                to_generate = int(round(class_count * 0.10))
+            elif 81 <= class_count <= 90:
+                to_generate = int(round(class_count * 0.05))
+            else:
+                to_generate = 0
+
+            if to_generate <= 0:
+                continue
+
+            print(f"WGAN-GP generating {to_generate} images for class: {class_name} (Current count: {class_count})...")
 
             z = torch.randn(to_generate, z_dim, 1, 1, device=device)
             labels = torch.full((to_generate,), class_idx, dtype=torch.long, device=device)

@@ -18,9 +18,6 @@ def main():
     # 1. Calcular o desbalanceamento das classes
     df = pd.read_csv(csv_path)
     counts = df['label'].value_counts()
-    max_imagens = counts.max()
-    print(f"-> A classe mais populosa tem {max_imagens} imagens.")
-    print(f"-> Objetivo: Igualar todas as classes a {max_imagens} exemplares.\n")
 
     # 2. Carregar o Modelo e os Pesos LoRA treinados por vós
     print("A carregar o Stable Diffusion + os vossos pesos LoRA...")
@@ -36,10 +33,18 @@ def main():
 
     # 4. Loop de Geração Automatizada
     for classe, total_atual in counts.items():
-        imagens_a_gerar = max_imagens - total_atual
+        if 51 <= total_atual <= 60:
+            imagens_a_gerar = int(round(total_atual * 0.20))
+        elif 61 <= total_atual <= 70:
+            imagens_a_gerar = int(round(total_atual * 0.15))
+        elif 71 <= total_atual <= 80:
+            imagens_a_gerar = int(round(total_atual * 0.10))
+        elif 81 <= total_atual <= 90:
+            imagens_a_gerar = int(round(total_atual * 0.05))
+        else:
+            imagens_a_gerar = 0
         
         if imagens_a_gerar <= 0:
-            print(f"Classe [{classe}] já está no máximo ({total_atual} imagens). A saltar...")
             continue
 
         print(f"\n[Processando] Classe: {classe} | Atual: {total_atual} -> Gerar mais: {imagens_a_gerar}")
