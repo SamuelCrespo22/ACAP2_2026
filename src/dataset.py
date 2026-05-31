@@ -13,6 +13,13 @@ class ButterflyDataset(data.Dataset):
         self.img_dir = img_dir
         self.transform = transform
 
+        self.filenames = self.img_labels["filename"].tolist()
+        self.labels = self.img_labels["label"].tolist()
+        if "img_dir" in self.img_labels.columns:
+            self.img_dirs = self.img_labels["img_dir"].tolist()
+        else:
+            self.img_dirs = [self.img_dir] * len(self.img_labels)
+
         if classes is None:
             self.classes = sorted(self.img_labels["label"].unique())
         else:
@@ -20,19 +27,20 @@ class ButterflyDataset(data.Dataset):
 
         self.class_to_idx = {cls_name: idx for idx, cls_name in enumerate(self.classes)}
 
+        print(f"Pre loading {len(self.filenames)} images to RAM...")
+        self.images_cache = []
+        for i in range(len(self.filenames)):
+            img_path = os.path.join(self.img_dirs[i], self.filenames[i])
+            self.images_cache.append(Image.open(img_path).convert("RGB"))
+        print("Pre loading completed.")
+
     def __len__(self):
         return len(self.img_labels)
 
     def __getitem__(self, idx):
-        img_name = self.img_labels.iloc[idx]["filename"]
-        
-        current_img_dir = self.img_labels.iloc[idx].get('img_dir', self.img_dir)
-        img_path = os.path.join(current_img_dir, img_name)
+        image = self.images_cache[idx]
 
-        image = Image.open(img_path).convert("RGB")
-
-        label_name = self.img_labels.iloc[idx]["label"]
-
+        label_name = self.labels[idx]
         if label_name not in self.class_to_idx:
             raise ValueError(
                 f"Label '{label_name}' not found in classes mapping. "

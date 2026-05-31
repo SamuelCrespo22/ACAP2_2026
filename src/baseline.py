@@ -99,6 +99,7 @@ def parse_args():
 
     parser.add_argument("--save_dir", default="results/baseline_original")
     parser.add_argument("--experiment_name", default="Baseline Original")
+    parser.add_argument("--num_workers", type=int, default=0)
 
     return parser.parse_args()
 
@@ -120,10 +121,14 @@ def main():
     os.makedirs(args.save_dir, exist_ok=True)
     os.makedirs("results", exist_ok=True)
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+    elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+        device = torch.device("mps")
+    else:
+        device = torch.device("cpu")
     print(f"Using device: {device}")
 
-    # As 5 seeds focadas APENAS na rede neural e batch shuffling
     seeds = [42, 43, 44, 45, 46]
 
     for seed in seeds:
@@ -141,6 +146,7 @@ def main():
             normalize=True,
             aug_csv_path=args.aug_csv_path,
             aug_img_dir=args.aug_img_dir,
+            num_workers=args.num_workers,
         )
 
         num_classes = len(classes)
