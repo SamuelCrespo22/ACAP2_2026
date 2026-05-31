@@ -77,7 +77,12 @@ def get_dataloaders(
     df['img_dir'] = img_dir 
     classes = sorted(df["label"].unique())
 
-    pin_memory = torch.cuda.is_available()
+    try:
+        import torch_directml
+        has_dml = torch_directml.is_available()
+    except ImportError:
+        has_dml = False
+    pin_memory = torch.cuda.is_available() or has_dml
 
     mean = (0.5, 0.5, 0.5)
     std = (0.5, 0.5, 0.5)
