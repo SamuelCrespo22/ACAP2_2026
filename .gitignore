@@ -112,7 +112,7 @@ cython_debug/
 .DS_Store
 
 # Data and Models
-
+*.pth
 *.pt
 *.h5
 *.hdf5

@@ -5,6 +5,7 @@ from src.utils import append_generative_metrics_to_csv
 
 def main():
     real_images_dir = 'data/train'
+    # TO RUN THIS, YOU MUST HAVE A generated_butterflies FOLDER WITH ONLY AUGMENTED IMAGES
     generated_images_dir = 'code_for_lora/generated_butterflies'
     
     experiment_name = 'Generated Butterflies'
