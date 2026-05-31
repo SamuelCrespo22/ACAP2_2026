@@ -20,8 +20,9 @@ def parse_args():
 
     parser.add_argument("--csv_path", default="data/train.csv")
     parser.add_argument("--img_dir", default="data/train")
-    parser.add_argument("--batch_size", type=int, default=32)
+    parser.add_argument("--batch_size", type=int, default=64)
     parser.add_argument("--img_size", type=int, default=64)
+    parser.add_argument("--num_workers", type=int, default=4, help="Número de processos a carregar imagens")
 
     parser.add_argument("--val_size", type=float, default=0.15)
     parser.add_argument("--test_size", type=float, default=0.15)
@@ -47,7 +48,12 @@ def main():
     args = parse_args()
     os.makedirs("results", exist_ok=True)
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+    elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+        device = torch.device("mps")
+    else:
+        device = torch.device("cpu")
     print(f"Using device: {device}")
 
     print("Preparing fixed test dataloader...")
@@ -62,6 +68,7 @@ def main():
         normalize=True,
         aug_csv_path=None,
         aug_img_dir=None,
+        num_workers=args.num_workers,
     )
 
     num_classes = len(classes)
