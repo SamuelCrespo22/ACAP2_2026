@@ -30,7 +30,7 @@ def train_one_epoch(model, train_loader, criterion, optimizer, device):
         images = images.to(device)
         labels = labels.to(device)
 
-        optimizer.zero_grad()
+        optimizer.zero_grad(set_to_none=True)
 
         outputs = model(images)
         loss = criterion(outputs, labels)
@@ -91,7 +91,7 @@ def parse_args():
     parser.add_argument("--aug_img_dir", default=None, help="Path to generated images directory")
     parser.add_argument("--batch_size", type=int, default=32)
     parser.add_argument("--img_size", type=int, default=64)
-    parser.add_argument("--epochs", type=int, default=100)
+    parser.add_argument("--epochs", type=int, default=200)
     parser.add_argument("--learning_rate", type=float, default=0.001)
 
     parser.add_argument("--val_size", type=float, default=0.15)
@@ -126,7 +126,14 @@ def main():
     elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
         device = torch.device("mps")
     else:
-        device = torch.device("cpu")
+        try:
+            import torch_directml
+            if torch_directml.is_available():
+                device = torch_directml.device()
+            else:
+                device = torch.device("cpu")
+        except ImportError:
+            device = torch.device("cpu")
     print(f"Using device: {device}")
 
     seeds = [42, 43, 44, 45, 46]
@@ -156,7 +163,7 @@ def main():
         os.makedirs(current_save_dir, exist_ok=True)
 
         model = BaselineCNN(num_classes=num_classes).to(device)
-        optimizer = optim.Adam(model.parameters(), lr=args.learning_rate)
+        optimizer = optim.Adam(model.parameters(), lr=args.learning_rate, foreach=False)
         criterion = nn.CrossEntropyLoss()
 
         train_losses = []
@@ -233,7 +240,7 @@ def main():
             save_path=os.path.join(current_save_dir, "training_curves.png"),
         )
 
-        checkpoint = torch.load(best_model_path, map_location=device)
+        checkpoint = torch.load(best_model_path, map_location="cpu", weights_only=False)
         model.load_state_dict(checkpoint["model_state_dict"])
 
         val_metrics, val_report, y_true_val, y_pred_val = evaluate_model(

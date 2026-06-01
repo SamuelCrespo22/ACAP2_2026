@@ -24,11 +24,15 @@ def parse_args():
     parser.add_argument("--img_size", type=int, default=64)
     parser.add_argument("--num_workers", type=int, default=4, help="Número de processos a carregar imagens")
 
+    parser.add_argument("--seed", type=int, default=None, help="Seed específica a avaliar (omitir para correr todas: 42-46)")
+
     parser.add_argument("--val_size", type=float, default=0.15)
     parser.add_argument("--test_size", type=float, default=0.15)
 
     parser.add_argument("--save_dir", default="results/baseline_original")
-    parser.add_argument("--experiment_name", default="Baseline Original")
+    # Se não for passado, é derivado automaticamente do save_dir
+    parser.add_argument("--experiment_name", default=None,
+                        help="Nome do experimento (default: basename do save_dir)")
 
     return parser.parse_args()
 
@@ -48,6 +52,10 @@ def main():
     args = parse_args()
     os.makedirs("results", exist_ok=True)
 
+    # Deriva o nome do experimento a partir do save_dir se não for passado
+    if args.experiment_name is None:
+        args.experiment_name = os.path.basename(os.path.normpath(args.save_dir))
+
     if torch.cuda.is_available():
         device = torch.device("cuda")
     elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
@@ -56,7 +64,10 @@ def main():
         device = torch.device("cpu")
     print(f"Using device: {device}")
 
+    print(f"\nFamília: {args.experiment_name}")
+    print(f"Modelos em: {args.save_dir}")
     print("Preparing fixed test dataloader...")
+
     _, _, test_loader, classes = get_dataloaders(
         csv_path=args.csv_path,
         img_dir=args.img_dir,
@@ -72,7 +83,7 @@ def main():
     )
 
     num_classes = len(classes)
-    seeds = [42, 43, 44, 45, 46]
+    seeds = [args.seed] if args.seed is not None else list(range(42, 47))
 
     for seed in seeds:
         print(f"\n{'='*50}\nEvaluating Test Set for CNN Initialization Seed: {seed}\n{'='*50}")
@@ -85,11 +96,11 @@ def main():
         if not os.path.exists(best_model_path):
             print(f"Model not found at {best_model_path}. Please train this seed first. Skipping...")
             continue
-        
+
         model = BaselineCNN(num_classes=num_classes).to(device)
-        checkpoint = torch.load(best_model_path, map_location=device)
+        checkpoint = torch.load(best_model_path, map_location="cpu", weights_only=False)
         model.load_state_dict(checkpoint["model_state_dict"])
-        
+
         epoch_saved = checkpoint.get('epoch', 'N/A')
         f1_saved = checkpoint.get('val_f1', 0.0)
         print(f"Successfully loaded model from epoch {epoch_saved} (Val F1 Macro: {f1_saved:.4f}).")
@@ -121,6 +132,11 @@ def main():
             )
 
         print(f"Test evaluation completed for Network Seed {seed}.")
+
+    print(f"\n{'='*50}")
+    print(f"Família '{args.experiment_name}' concluída. Seeds avaliadas: {seeds}")
+    print(f"Resultados em: results/all_experiments_test.csv")
+
 
 if __name__ == "__main__":
     main()
